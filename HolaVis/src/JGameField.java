@@ -11,12 +11,18 @@ import java.awt.*;
     public class JGameField extends JPanel {
 
         //Add the ubiquitous "Hello World" label.
+    private FieldState fs;
 
     public JGameField(FieldState fs) {
-        super(new GridLayout(fs.getWidth(), fs.getHeight(), 1, 1), true);
-        for(int i = 0; i < fs.getWidth(); ++i) {
-            for (int j = 0; j < fs.getHeight(); j++) {
-                JLabel cell = new JLabel(Character.toString(fs.getCell(i,j).getRep()));
+        super(new GridLayout(fs.getHeight(), fs.getWidth(), 1, 1), true);
+        this.fs = fs;
+        update();
+    }
+
+    public void update() {
+        for(int i = 0; i < fs.getHeight(); ++i) {
+            for (int j = 0; j < fs.getWidth(); j++) {
+                JLabel cell = new JLabel(Character.toString(fs.getCell(j,i).getRep()));
                 this.add(cell);
             }
         }

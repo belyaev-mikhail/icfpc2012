@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/HolaVis.iml" filepath="$PROJECT_DIR$/HolaVis.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../walker/walker.iml" filepath="$PROJECT_DIR$/../walker/walker.iml" />
     </modules>
   </component>
 </project>

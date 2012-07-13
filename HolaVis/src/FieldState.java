@@ -9,7 +9,9 @@ public class FieldState {
     public FieldState(String repr) {
         StringTokenizer tkn = new StringTokenizer(repr, "\n", false);
         int x = 0, y = 0;
-        for(String token = tkn.nextToken(); tkn.hasMoreTokens(); token = tkn.nextToken()) {
+        String token;
+        while( tkn.hasMoreTokens() ) {
+            token = tkn.nextToken();
             List<CellState> row = new LinkedList<CellState>();
             cells.add(row);
             for (char c: token.toCharArray()) {
