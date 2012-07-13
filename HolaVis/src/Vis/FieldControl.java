@@ -220,4 +220,8 @@ public class FieldControl {
     public int getPoints() {
         return points;
     }
+
+    public FieldState getState() {
+        return oldState;
+    }
 }

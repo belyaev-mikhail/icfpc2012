@@ -1,6 +1,7 @@
 package Walker;
 
 import Vis.CellState;
+import Vis.FieldControl;
 import Vis.FieldState;
 
 import java.util.LinkedList;
@@ -17,7 +18,7 @@ import static Vis.CellState.*;
  * To change this template use File | Settings | File Templates.
  */
 public class Walker {
-    FieldState field;
+    FieldControl field;
 
     List<Point> lambdas;
 
@@ -51,6 +52,14 @@ public class Walker {
         public void setY(int y) {
             this.y = y;
         }
+
+        @Override
+        public String toString() {
+            return "Point{" +
+                    "x=" + x +
+                    ", y=" + y +
+                    '}';
+        }
     }
 
     public List<Point> findRoute(FieldState field, Point from, Point to) {
@@ -58,8 +67,8 @@ public class Walker {
         int dy = (to.getY() - from.getY()) > 0 ? 1 : -1;
 
         List<Point> route = new LinkedList<Point>();
-        for(int xx = from.getX(); xx != to.getX(); xx += dx) {
-            for(int yy = from.getY(); yy != to.getY(); yy += dy) {
+        for(int xx = from.getX(); xx != to.getX() + dx; xx += dx) {
+            for(int yy = from.getY(); yy != to.getY() + dy; yy += dy) {
                 route.add(new Point(xx, yy));
             }
         }
@@ -208,13 +217,13 @@ public class Walker {
         if (!hasRoute){
             return Move.ABORT;
         } else {
-            return guessRoute == null ? Move.ABORT : getDxDy(guessRoute.get(0), guessRoute.get(1));
+            return guessRoute == null || guessRoute.size() < 2 ? Move.ABORT : getDxDy(guessRoute.get(0), guessRoute.get(1));
         }
     }
 
     Move getDxDy(Point start, Point next) {
-        int dx = start.getX() - next.getX();
-        int dy = start.getY() - next.getY();
+        int dx = next.getX() - start.getX();
+        int dy = next.getY() - start.getY() ;
 
         if (dx > 0) {
             return Move.RIGHT;
