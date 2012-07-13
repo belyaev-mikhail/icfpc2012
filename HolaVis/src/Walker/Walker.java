@@ -67,11 +67,18 @@ public class Walker {
         int dy = (to.getY() - from.getY()) > 0 ? 1 : -1;
 
         List<Point> route = new LinkedList<Point>();
-        for(int xx = from.getX(); xx != to.getX() + dx; xx += dx) {
-            for(int yy = from.getY(); yy != to.getY() + dy; yy += dy) {
-                route.add(new Point(xx, yy));
-            }
+        int xx = from.getX();
+        int yy = from.getY();
+        route.add(new Point(xx, yy));
+        while( xx != to.getX()) {
+            xx += dx;
+            route.add(new Point(xx, yy));
         }
+        while ( yy != to.getY()) {
+            yy += dy;
+            route.add(new Point(xx, yy));
+        }
+
 
         boolean routeValid = routeValid(route, field);
 
@@ -135,7 +142,12 @@ public class Walker {
     }
 
     public static boolean pointWalkable(Point p, FieldState field) {
-        switch(field.getCell(p.getX(), p.getY())) {
+        System.out.println(p);
+        CellState cell = field.peekCell(p.getX(), p.getY());
+        if (cell == null) {
+            return false;
+        }
+        switch(cell) {
             case ROCK:
             case WALL:
             case CLOSED_LIFT:
@@ -156,14 +168,18 @@ public class Walker {
 
     public List<Point> getValidRoute(List<Point> route, FieldState field, boolean left) {
         List<Point> route2 = new LinkedList<Point>();
+        List<Point> routeReduced = new LinkedList<Point>(route);
 
-        Point last = route.get(0);
-        for(Point p : route) {
+        Point last = routeReduced.get(0);
+        for(Point p : routeReduced) {
+            if(!pointInsideBox(p, field)) {
+                break;
+            }
             if (pointWalkable(p, field)) {
                 route2.add(p);
             } else {
-                int dxx = p.getX() - last.getX();
-                int dyy = p.getY() - last.getY();
+                int dxx = (p.getX() - last.getX()) > 0 ? 1 : -1;
+                int dyy = (p.getY() - last.getY()) > 0 ? 1 : -1;
 
                 if (left) {
                     dxx = -dxx;
@@ -171,7 +187,7 @@ public class Walker {
                 }
 
                 Point pp = new Point(p.getX() + dyy, p.getY() + dxx);
-                route.add(pp);
+                route2.add(pp);
             }
         }
 
@@ -185,6 +201,7 @@ public class Walker {
             for(int y = 0; y <field.getHeight(); y++) {
                 switch (field.getCell(x, y)) {
                     case LAMBDA:
+                    case OPEN_LIFT:
                         lambdas.add(new Point(x,y));
                         break;
                     case ROBOT:

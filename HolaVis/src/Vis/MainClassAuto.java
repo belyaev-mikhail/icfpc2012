@@ -24,8 +24,9 @@ public class MainClassAuto {
         String testField =
                 "#########\n" +
                 "#.....*.#\n" +
-                "L      R#\n" +
-                "#\\  ..\\ #\n" +
+                "#.#...*.#\n" +
+                "L  #   R#\n" +
+                "#\\ #... #\n" +
                 "#########\n";
 
         final FieldControl fs = new FieldControl(testField);
@@ -58,10 +59,17 @@ public class MainClassAuto {
 
             @Override
             public void standAndWait() {
-                sendSignal();
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        sendSignal();
+                    }
+                });
+
             }
 
             private void sendSignal() {
+
                 final Walker walker = new Walker();
                 Move move = walker.buildRoute(fs.getState());
                 System.out.println(move);
