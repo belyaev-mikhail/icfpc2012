@@ -1,3 +1,5 @@
+package Vis;
+
 import javax.swing.*;
 import java.awt.*;
 

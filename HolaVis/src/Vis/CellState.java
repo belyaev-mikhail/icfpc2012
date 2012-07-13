@@ -1,3 +1,4 @@
+package Vis;
 
 public enum CellState {
     ROBOT('R'),
