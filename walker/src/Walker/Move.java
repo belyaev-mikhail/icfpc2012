@@ -1,3 +1,5 @@
+package Walker;
+
 /**
  * Created with IntelliJ IDEA.
  * User: lonlylocly

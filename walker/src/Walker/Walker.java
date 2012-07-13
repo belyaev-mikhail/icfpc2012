@@ -1,3 +1,5 @@
+package Walker;
+
 /**
  * Created with IntelliJ IDEA.
  * User: lonlylocly
@@ -12,7 +14,7 @@ public class Walker {
         this.rockMap = rockMap;
     }
 
-    public buildRoute() {
-
+    public Move[] buildRoute() {
+        return null;
     }
 }
