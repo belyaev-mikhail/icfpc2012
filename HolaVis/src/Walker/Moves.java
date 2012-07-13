@@ -11,6 +11,11 @@ public class Moves {
     int moves = 0;
     int lambdas = 0;
 
+    public Moves(int moves, int lambdas) {
+        this.moves = moves;
+        this.lambdas = lambdas;
+    }
+
     public int getMoves() {
         return moves;
     }
