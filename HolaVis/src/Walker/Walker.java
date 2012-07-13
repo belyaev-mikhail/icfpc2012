@@ -1,5 +1,7 @@
 package Walker;
 
+import Vis.FieldState;
+
 /**
  * Created with IntelliJ IDEA.
  * User: lonlylocly

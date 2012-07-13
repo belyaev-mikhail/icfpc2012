@@ -1,6 +1,11 @@
 package Vis;
 
+import Walker.Move;
+
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.beans.PropertyChangeListener;
 
 public class MainClass {
 
@@ -20,16 +25,61 @@ public class MainClass {
 
         String testField =
                 "#########\n" +
-                "#.......#\n" +
-                "#R      #\n" +
-                "#\\  ..\\.#\n" +
+                "#.....*.#\n" +
+                "#R      L\n" +
+                "#\\  ..\\ #\n" +
                 "#########\n";
 
-        frame.getContentPane().add(new JGameField(new FieldState(testField)));
+        final FieldControl fs = new FieldControl(testField);
+        final JGameField gf = new JGameField(fs);
+        frame.getContentPane().add(gf);
+
+        new ArrowController(gf) {
+
+            @Override
+            public void goUp() {
+                sendSignal(Move.UP);
+            }
+
+            @Override
+            public void goDown() {
+                sendSignal(Move.DOWN);
+            }
+
+            @Override
+            public void goLeft() {
+                sendSignal(Move.LEFT);
+            }
+
+            @Override
+            public void goRight() {
+                sendSignal(Move.RIGHT);
+            }
+
+            @Override
+            public void abortGame() {
+                sendSignal(Move.ABORT);
+            }
+
+            @Override
+            public void standAndWait() {
+                sendSignal(Move.WAIT);
+            }
+
+            private void sendSignal(Move move) {
+                fs.startChange();
+                fs.playerMove(move);
+                fs.step();
+                fs.commitChange();
+
+                System.out.println("Current points: " + fs.getPoints());
+            }
+        };
 
         //Display the window.
         frame.pack();
         frame.setVisible(true);
+
     }
 
     public static void main(String[] args) {
