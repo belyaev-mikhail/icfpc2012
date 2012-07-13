@@ -2,14 +2,21 @@ package Vis;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public class JGameField extends JPanel implements FieldControlListener {
 
         //Add the ubiquitous "Hello World" label.
     private FieldControl fs;
     private List<List<JLabel>> labels = new LinkedList<List<JLabel>>();
+
+    private static Map<Character, Icon> fancies = new HashMap<Character, Icon>(8);
+//    static {
+//        fancies.put('R', new ImageIcon(JGameField.class.getResource("R.png")) );
+//    }
 
     public JGameField(FieldControl fs) {
         super(new GridLayout(fs.getHeight(), fs.getWidth(), 1, 1), true);
@@ -20,7 +27,12 @@ public class JGameField extends JPanel implements FieldControlListener {
             List<JLabel> row = new LinkedList<JLabel>();
             labels.add(row);
             for (int j = 0; j < fs.getWidth(); j++) {
-                JLabel cell = new JLabel(Character.toString(fs.getCell(j,fs.getHeight()-i-1).getRep()));
+                char ch =  fs.getCell(j,fs.getHeight()-i-1).getRep();
+                JLabel cell;
+                if(fancies.containsKey(ch)){
+                     cell = new JLabel(fancies.get(ch));
+                }
+                else cell = new JLabel(Character.toString(ch));
                 this.add(cell);
                 row.add(cell);
             }
