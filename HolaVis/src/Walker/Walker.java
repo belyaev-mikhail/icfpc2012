@@ -1,3 +1,5 @@
+package Walker;
+
 /**
  * Created with IntelliJ IDEA.
  * User: lonlylocly
@@ -6,13 +8,10 @@
  * To change this template use File | Settings | File Templates.
  */
 public class Walker {
-    RockMap rockMap;
+    FieldState field;
 
-    public Walker(RockMap rockMap) {
-        this.rockMap = rockMap;
-    }
 
-    public buildRoute() {
-
+    public Move[] buildRoute() {
+        return null;
     }
 }
