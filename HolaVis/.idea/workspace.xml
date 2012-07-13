@@ -99,10 +99,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="MainClass.java" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="MainClass.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/Vis/MainClass.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="28" column="19" selection-start="756" selection-end="756" vertical-scroll-proportion="0.0">
+            <state line="33" column="18" selection-start="914" selection-end="914" vertical-scroll-proportion="-0.8921283">
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -110,36 +110,43 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MainClassAuto.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/Vis/MainClassAuto.java">
+      <file leaf-file-name="FieldControlListener.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/Vis/FieldControlListener.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="27" column="22" selection-start="708" selection-end="708" vertical-scroll-proportion="0.0">
-              <folding>
-                <element signature="e#1440#1604#0" expanded="true" />
-                <element signature="e#1585#1586#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Walker.java" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/Walker/Walker.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="149" column="19" selection-start="3865" selection-end="3865" vertical-scroll-proportion="0.3819242">
-              <folding>
-                <element signature="e#1347#1354#0" expanded="true" />
-                <element signature="e#4463#4470#0" expanded="true" />
-                <element signature="e#4523#4530#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Score.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/Walker/Score.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="35" column="7" selection-start="271" selection-end="891" vertical-scroll-proportion="0.0">
+            <state line="2" column="17" selection-start="31" selection-end="31" vertical-scroll-proportion="0.0">
               <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="FieldController.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/Vis/FieldController.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="9" column="17" selection-start="183" selection-end="183" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="FieldState.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/Vis/FieldState.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="53" column="0" selection-start="1507" selection-end="1507" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="JGameField.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/Vis/JGameField.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="17" column="26" selection-start="504" selection-end="504" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#363#377#0" expanded="true" />
+                <element signature="e#443#460#0" expanded="true" />
+                <element signature="e#1447#1455#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -158,12 +165,12 @@
         <option value="$PROJECT_DIR$/src/Vis/FieldState.java" />
         <option value="$PROJECT_DIR$/src/Vis/ArrowController.java" />
         <option value="$PROJECT_DIR$/src/Vis/MainClass.java" />
-        <option value="$PROJECT_DIR$/src/Vis/JGameField.java" />
         <option value="$PROJECT_DIR$/src/Vis/FieldController.java" />
         <option value="$PROJECT_DIR$/src/Vis/FieldControl.java" />
         <option value="$PROJECT_DIR$/src/Walker/Score.java" />
         <option value="$PROJECT_DIR$/src/Vis/MainClassAuto.java" />
         <option value="$PROJECT_DIR$/src/Walker/Walker.java" />
+        <option value="$PROJECT_DIR$/src/Vis/JGameField.java" />
       </list>
     </option>
   </component>
@@ -264,6 +271,20 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="HolaVis" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="HolaVis" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="resources" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
         </subPane>
       </pane>
     </panes>
@@ -287,11 +308,17 @@
     <key name="CopyClassDialog.RECENTS_KEY">
       <recent name="Vis" />
     </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\kopcap\IdeaProjects\hola\HolaVis\src\Vis" />
+    </key>
     <key name="CreateClassDialog.RecentsKey">
       <recent name="Vis" />
     </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\kopcap\IdeaProjects\hola\HolaVis\src\Vis\Res" />
+    </key>
   </component>
-  <component name="RunManager" selected="Application.MainClassAuto">
+  <component name="RunManager" selected="Application.MainClass">
     <configuration default="false" name="MainClass" type="Application" factoryName="Application" temporary="true">
       <option name="MAIN_CLASS_NAME" value="Vis.MainClass" />
       <option name="VM_PARAMETERS" />
@@ -495,7 +522,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="JetGradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
@@ -511,7 +538,7 @@
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24962063" sideWeight="0.41095892" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.36643836" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.36643836" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -578,20 +605,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/Walker/Moves.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="9" column="13" selection-start="188" selection-end="188" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/Program Files (x86)/Java/jdk1.6.0_20/src.zip!/java/util/List.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="567" column="12" selection-start="26276" selection-end="26276" vertical-scroll-proportion="0.8874172">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/Walker/Move.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="9" column="12" selection-start="187" selection-end="187" vertical-scroll-proportion="0.44606414">
@@ -627,13 +640,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Vis/FieldController.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="9" column="17" selection-start="183" selection-end="183" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/Vis/FieldControl.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="224" column="24" selection-start="7636" selection-end="7636" vertical-scroll-proportion="0.8119469">
@@ -653,18 +659,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Vis/JGameField.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="11" column="57" selection-start="279" selection-end="279" vertical-scroll-proportion="-0.2079646">
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#363#377#0" expanded="true" />
-            <element signature="e#443#460#0" expanded="true" />
-            <element signature="e#835#843#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/Walker/Score.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="35" column="7" selection-start="271" selection-end="891" vertical-scroll-proportion="0.0">
@@ -672,18 +666,13 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Vis/FieldState.java">
+    <entry file="file://$PROJECT_DIR$/src/Walker/Walker.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="53" column="0" selection-start="1507" selection-end="1507" vertical-scroll-proportion="0.33236152">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/Vis/MainClass.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="28" column="19" selection-start="756" selection-end="756" vertical-scroll-proportion="0.0">
+        <state line="149" column="19" selection-start="3865" selection-end="3865" vertical-scroll-proportion="0.8279883">
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="e#1347#1354#0" expanded="true" />
+            <element signature="e#4463#4470#0" expanded="true" />
+            <element signature="e#4523#4530#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -698,13 +687,49 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Walker/Walker.java">
+    <entry file="file://$PROJECT_DIR$/src/Vis/Res/W.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Vis/FieldControlListener.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="149" column="19" selection-start="3865" selection-end="3865" vertical-scroll-proportion="0.3819242">
+        <state line="2" column="17" selection-start="31" selection-end="31" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Vis/FieldController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="9" column="17" selection-start="183" selection-end="183" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Vis/FieldState.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="53" column="0" selection-start="1507" selection-end="1507" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Vis/JGameField.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="17" column="26" selection-start="504" selection-end="504" vertical-scroll-proportion="0.0">
           <folding>
-            <element signature="e#1347#1354#0" expanded="true" />
-            <element signature="e#4463#4470#0" expanded="true" />
-            <element signature="e#4523#4530#0" expanded="true" />
+            <element signature="imports" expanded="true" />
+            <element signature="e#363#377#0" expanded="true" />
+            <element signature="e#443#460#0" expanded="true" />
+            <element signature="e#1447#1455#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Vis/MainClass.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="33" column="18" selection-start="914" selection-end="914" vertical-scroll-proportion="-0.8921283">
+          <folding>
+            <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
