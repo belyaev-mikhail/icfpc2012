@@ -4,6 +4,7 @@ import Walker.Move;
 import Walker.Walker;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class MainClassAuto {
 
@@ -28,6 +29,11 @@ public class MainClassAuto {
                 "L  #.. R#\n" +
                 "#\\ #... #\n" +
                 "#########\n";
+
+        JTextArea area = new JTextArea(testField);
+        area.setFont(new Font("Courier New",0,11));
+        JOptionPane.showMessageDialog(null, area);
+        testField = area.getText();
 
         final FieldControl fs = new FieldControl(testField);
         final JGameField gf = new JGameField(fs);

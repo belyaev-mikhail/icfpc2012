@@ -15,18 +15,33 @@ public class JGameField extends JPanel implements FieldControlListener {
 
     private static Map<Character, Icon> fancies = new HashMap<Character, Icon>(8);
     static {
-        fancies.put('R',  new ImageIcon(JGameField.class.getResource("Res/R.png")) );
-        fancies.put('\\', new ImageIcon(JGameField.class.getResource("Res/Lam.png")) );
-        fancies.put('.',  new ImageIcon(JGameField.class.getResource("Res/E.png")) );
-        fancies.put('#',  new ImageIcon(JGameField.class.getResource("Res/W.png")) );
-        fancies.put('*',  new ImageIcon(JGameField.class.getResource("Res/Rock.png")) );
-        fancies.put('L',  new ImageIcon(JGameField.class.getResource("Res/CL.png")) );
-        fancies.put('O',  new ImageIcon(JGameField.class.getResource("Res/OL.png")) );
-        fancies.put(' ',  new ImageIcon(JGameField.class.getResource("Res/Empty.png")) );
+        fancies.put('R',  new ImageIcon(JGameField.class.getResource("Res/small-R.png")) );
+        fancies.put('\\', new ImageIcon(JGameField.class.getResource("Res/small-Lam.png")) );
+        fancies.put('.',  new ImageIcon(JGameField.class.getResource("Res/small-E.png")) );
+        fancies.put('#',  new ImageIcon(JGameField.class.getResource("Res/small-W.png")) );
+        fancies.put('*',  new ImageIcon(JGameField.class.getResource("Res/small-Rock.png")) );
+        fancies.put('L',  new ImageIcon(JGameField.class.getResource("Res/small-CL.png")) );
+        fancies.put('O',  new ImageIcon(JGameField.class.getResource("Res/small-OL.png")) );
+        fancies.put(' ',  new ImageIcon(JGameField.class.getResource("Res/small-Empty.png")) );
     }
 
     public JGameField(FieldControl fs) {
-        super(new GridLayout(fs.getHeight(), fs.getWidth(), 0, 0), true);
+        setFieldControl(fs);
+    }
+
+    FieldControl getFieldControl() {
+        return fs;
+    }
+
+    void setFieldControl(FieldControl fs) {
+        for (List<JLabel> row: labels) {
+            for (JLabel lab: row) {
+                this.remove(lab);
+            }
+        }
+        labels.clear();
+        this.setLayout(new GridLayout(fs.getHeight(), fs.getWidth(), 0, 0));
+
         this.fs = fs;
         fs.addListener(this);
 
@@ -37,7 +52,7 @@ public class JGameField extends JPanel implements FieldControlListener {
                 char ch =  fs.getCell(j,fs.getHeight()-i-1).getRep();
                 JLabel cell;
                 if(fancies.containsKey(ch)){
-                     cell = new JLabel(fancies.get(ch));
+                    cell = new JLabel(fancies.get(ch));
                 }
                 else cell = new JLabel(Character.toString(ch));
                 this.add(cell);

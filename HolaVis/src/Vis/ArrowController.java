@@ -19,6 +19,12 @@ public abstract class ArrowController  {
 
     protected ArrowController(JPanel father) {
         this.father = father;
+        reset();
+    }
+
+    public void reset() {
+        System.out.println("resetting arrow controls for " + father);
+
         father.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0), "UP");
         father.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0),"DOWN");
         father.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0),"RIGHT");

@@ -3,6 +3,7 @@ package Vis;
 import Walker.Move;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeListener;
@@ -20,7 +21,7 @@ public class MainClass {
         JFrame.setDefaultLookAndFeelDecorated(true);
 
         //Create and set up the window.
-        JFrame frame = new JFrame("Da field");
+        final JFrame frame = new JFrame("Da field");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         String testField =
@@ -30,11 +31,22 @@ public class MainClass {
                 "#\\  ..\\ #\n" +
                 "#########\n";
 
-        final FieldControl fs = new FieldControl(testField);
-        final JGameField gf = new JGameField(fs);
-        frame.getContentPane().add(gf);
+        JTextArea area = new JTextArea(testField);
+        area.setFont(new Font("Courier New",0,11));
+        JOptionPane.showMessageDialog(null, area);
+        testField = area.getText();
 
-        new ArrowController(gf) {
+
+        final JGameField gf = new JGameField(new FieldControl(testField));
+
+        JPanel pane = new JPanel();
+        pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
+        pane.add(gf);
+        final JTextArea fieldText = new JTextArea(testField);
+        fieldText.setFont(new Font("Courier New",0,11));
+        pane.add(fieldText);
+
+        final ArrowController arrows = new ArrowController(pane) {
 
             @Override
             public void goUp() {
@@ -68,6 +80,9 @@ public class MainClass {
 
             private void sendSignal(Move move) {
 
+                FieldControl fs = gf.getFieldControl();
+
+                System.out.println(fs);
                 fs.playerMove(move);
                 fs.startChange();
                 fs.step();
@@ -76,6 +91,10 @@ public class MainClass {
                 System.out.println("Current points: " + fs.getPoints());
             }
         };
+        frame.getContentPane().add(pane);
+
+
+
 
         //Display the window.
         frame.pack();
