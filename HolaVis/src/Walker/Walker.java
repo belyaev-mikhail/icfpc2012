@@ -399,18 +399,24 @@ public class Walker {
         int minLen = Integer.MAX_VALUE;
         List<Point> guessRoute = null;
 
+        List<List<Point>> routes = new LinkedList<List<Point>>();
         for(Point lp : lambdas) {
             List<Point> route = findRoute2(field, robot, lp);
-            if (route.size() !=0 && route.size() < minLen) {
+            routes.add(route);
+            if (route.size() !=0 && route.size() < minLen && route.size() > 1) {
                 guessRoute = route;
                 minLen = route.size();
                 hasRoute = true;
             }
         }
 
-        if (guessRoute != null || guessRoute.size() >= 2) {
+        if (guessRoute != null && guessRoute.size() >= 2) {
             System.out.println("next step");
             System.out.println(guessRoute);
+            System.out.println("routes:");
+            for(List<Point> r : routes) {
+                System.out.println(r);
+            }
         }
 
         if (!hasRoute){
