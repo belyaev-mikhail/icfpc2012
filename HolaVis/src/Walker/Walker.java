@@ -125,6 +125,8 @@ public class Walker {
                     if (p.getParent().equals(from)) {
                         if (!pointDangerous(p, field)) {
                             open.add(p);
+                        } else {
+                            System.out.println("Point danger: " + p);
                         }
                     } else {
                         open.add(p);
@@ -268,16 +270,16 @@ public class Walker {
             CellState c1 = getFieldCellState(pp1, field);
             CellState c2 = getFieldCellState(pp2, field);
             if (c1 != null && c2 != null) {
-                if (c1 == CellState.EMPTY && c2 == CellState.ROCK) {
+                if ((c1 == CellState.EMPTY || c1 == CellState.ROBOT) && c2 == CellState.ROCK) {
                     return true;
                 }
             }
         } else {
             return false;
         }
-        // *
-        // *
-        //  rR     r new loc, R old loc
+        // *                            42
+        // *                            31
+        //  rR     r new loc, R old loc  rR
         Point pp3 = new Point(p.getX() - 1, p.getY() + 1);
         Point pp4 = new Point(p.getX() - 1, p.getY() + 2);
         if (pointInsideBox(pp3, field) && pointInsideBox(pp4, field)) {
@@ -286,7 +288,7 @@ public class Walker {
             CellState c3 = getFieldCellState(pp3, field);
             CellState c4 = getFieldCellState(pp4, field);
             if (c1 != null && c2 != null && c3 != null && c4 != null) {
-                if (c1 == CellState.EMPTY && c2 == CellState.EMPTY
+                if ((c1 == CellState.EMPTY || c1 == CellState.ROBOT) && c2 == CellState.EMPTY
                         && c3 == CellState.ROCK
                         && (c4 == CellState.ROCK || c4 == CellState.LAMBDA))  {
                     return true;
@@ -312,7 +314,7 @@ public class Walker {
             CellState c5 = getFieldCellState(pp5, field);
             CellState c6 = getFieldCellState(pp6, field);
             if (c1 != null && c2 != null && c3 != null && c4 != null && c5 != null && c6 != null) {
-                if (c1 == CellState.EMPTY && c2 == CellState.EMPTY
+                if ((c1 == CellState.EMPTY || c1 == CellState.ROBOT) && c2 == CellState.EMPTY
                         && c3 == CellState.ROCK && c4 == CellState.ROCK
                         && c5 != CellState.EMPTY && c6 != CellState.EMPTY)  {
                     return true;

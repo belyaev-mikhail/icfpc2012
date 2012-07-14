@@ -5,6 +5,8 @@ import Walker.Walker;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class MainClassAuto {
 
@@ -32,6 +34,8 @@ public class MainClassAuto {
 
         JTextArea area = new JTextArea(testField);
         area.setFont(new Font("Courier New",0,11));
+        area.setColumns(40);
+        area.setRows(30);
         JOptionPane.showMessageDialog(null, area);
         testField = area.getText();
 
@@ -45,6 +49,21 @@ public class MainClassAuto {
 
             @Override
             public void goUp() {
+                if(fs.isGameStopped()) return;
+                Timer timer = new Timer(300, new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        SwingUtilities.invokeLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                sendSignal();
+                                //goUp();
+                            }
+                        });
+                }
+                });
+                timer.start();
+
             }
 
             @Override
