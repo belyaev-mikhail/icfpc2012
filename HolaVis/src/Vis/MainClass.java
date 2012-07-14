@@ -67,8 +67,9 @@ public class MainClass {
             }
 
             private void sendSignal(Move move) {
-                fs.startChange();
+
                 fs.playerMove(move);
+                fs.startChange();
                 fs.step();
                 fs.commitChange();
 

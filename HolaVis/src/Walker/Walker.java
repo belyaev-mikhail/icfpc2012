@@ -4,9 +4,7 @@ import Vis.CellState;
 import Vis.FieldControl;
 import Vis.FieldState;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 import static Vis.CellState.*;
 
@@ -31,10 +29,17 @@ public class Walker {
     public class Point{
         int x;
         int y;
+        Point parent = null;
 
         public Point(int x, int y) {
             this.x = x;
             this.y = y;
+        }
+
+        public Point(int x, int y, Point parent) {
+            this.x = x;
+            this.y = y;
+            this.parent = parent;
         }
 
         public int getX() {
@@ -53,6 +58,38 @@ public class Walker {
             this.y = y;
         }
 
+        public Point getParent() {
+            return parent;
+        }
+
+        public void setParent(Point parent) {
+            this.parent = parent;
+        }
+
+        public double diff(Point that) {
+            return Math.sqrt( Math.pow((double)(this.x - that.getX()), 2) + Math.pow((double)(this.y - that.getY()), 2));
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            Point point = (Point) o;
+
+            if (x != point.x) return false;
+            if (y != point.y) return false;
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = x;
+            result = 31 * result + y;
+            return result;
+        }
+
         @Override
         public String toString() {
             return "Point{" +
@@ -60,6 +97,61 @@ public class Walker {
                     ", y=" + y +
                     '}';
         }
+    }
+
+    public List<Point> findRoute2(FieldState field, Point from, final Point to) {
+        from.setParent(null);
+        List<Point> open = new LinkedList<Point>();
+        List<Point> closed = new LinkedList<Point>();
+
+        Point sel;
+        sel = from;
+
+        open.add(sel);
+        for(;;){
+            if(sel.equals(to) || open.isEmpty()) {
+                break;
+            }
+
+            closed.add(sel);
+            open.remove(sel);
+
+            int[] dy = {0,1,0,-1};
+            int[] dx = {1,0,-1,0};
+
+            for (int i = 0; i < dy.length; i++) {
+                Point p = new Point(sel.getX() + dx[i], sel.getY() + dy[i], sel);
+                if (!open.contains(p) && !closed.contains(p) && pointWalkable(p, field) && pointInsideBox(p, field)) {
+                    open.add(p);
+                }
+            }
+            sel = Collections.min(open, new Comparator<Point>() {
+                @Override
+                public int compare(Point o1, Point o2) {
+                    return (int)(routeCost(o1,to) - routeCost(o2,to));
+                }
+            });
+
+        }
+
+        List<Point> route = new LinkedList<Point>();
+        for(Point it = sel; it != null; it = it.getParent()) {
+            route.add(it);
+        }
+        Collections.reverse(route);
+        return route;
+    }
+
+    public static int getParentPathSize(Point current) {
+        int size = 0;
+        for(Point p = current; p.getParent() != null; p = p.getParent()) {
+            size ++;
+        }
+        return  size;
+    }
+
+    public static double routeCost(Point current, Point stop) {
+        return getParentPathSize(current) + stop.diff(current);
     }
 
     public List<Point> findRoute(FieldState field, Point from, Point to) {
@@ -177,17 +269,20 @@ public class Walker {
             }
             if (pointWalkable(p, field)) {
                 route2.add(p);
+                last = p;
             } else {
-                int dxx = (p.getX() - last.getX()) > 0 ? 1 : -1;
-                int dyy = (p.getY() - last.getY()) > 0 ? 1 : -1;
+                int dxx = p.getX() - last.getX();
+                int dyy = p.getY() - last.getY();
 
                 if (left) {
                     dxx = -dxx;
                     dyy = -dyy;
                 }
 
-                Point pp = new Point(p.getX() + dyy, p.getY() + dxx);
+                Point pp = new Point(last.getX() + dyy, last.getY() + dxx);
                 route2.add(pp);
+
+                last = pp;
             }
         }
 
@@ -218,12 +313,13 @@ public class Walker {
         this.set(field);
 
         Point robot = new Point(field.getPlayerX(), field.getPlayerY());
+
         boolean hasRoute = false;
         int minLen = Integer.MAX_VALUE;
         List<Point> guessRoute = null;
 
         for(Point lp : lambdas) {
-            List<Point> route = findRoute(field, robot, lp);
+            List<Point> route = findRoute2(field, robot, lp);
             if (route.size() !=0 && route.size() < minLen) {
                 guessRoute = route;
                 minLen = route.size();

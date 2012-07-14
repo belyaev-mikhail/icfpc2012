@@ -9,32 +9,20 @@ public class FieldControl {
     private FieldState oldState;
     private FieldState newState;
 
-    private int playerX;
-    private int playerY;
-    private int lambdaCounter;
     private int collectedLambdas = 0;
     private int points = 0;
 
     public FieldControl(String repr) {
         oldState = new FieldState(repr);
-        playerX = oldState.getPlayerX();
-        playerY = oldState.getPlayerY();
-        lambdaCounter = oldState.getLambdaCounter();
+        newState = oldState;
     }
 
     void startChange(){
         newState = oldState.clone();
-        playerX = oldState.getPlayerX();
-        playerY = oldState.getPlayerY();
-        lambdaCounter = oldState.getLambdaCounter();
     }
 
     void commitChange(){
         oldState = newState;
-        newState = null;
-        oldState.setPlayerX(playerX);
-        oldState.setPlayerY(playerY);
-        oldState.setLambdaCounter(lambdaCounter);
 
         onChange();
     }
@@ -63,20 +51,20 @@ public class FieldControl {
         int nx = 0, ny = 0;
         switch (move) {
             case UP:
-                nx = playerX;
-                ny = playerY+1;
+                nx = getPlayerX();
+                ny = getPlayerY() +1;
                 break;
             case DOWN:
-                nx = playerX;
-                ny = playerY-1;
+                nx = getPlayerX();
+                ny = getPlayerY() -1;
                 break;
             case RIGHT:
-                nx = playerX+1;
-                ny = playerY;
+                nx = getPlayerX() +1;
+                ny = getPlayerY();
                 break;
             case LEFT:
-                nx = playerX-1;
-                ny = playerY;
+                nx = getPlayerX() -1;
+                ny = getPlayerY();
                 break;
             case WAIT:
                 return;
@@ -88,51 +76,51 @@ public class FieldControl {
         CellState toMove = peekCell(nx,ny);
 
         if( CellState.EARTH.equals(toMove) || CellState.EMPTY.equals(toMove)) {
-            setCell(playerX,playerY,CellState.EMPTY);
+            setCell(getPlayerX(), getPlayerY(),CellState.EMPTY);
             setCell(nx,ny,CellState.ROBOT);
-            playerX = nx;
-            playerY = ny;
+            setPlayerX(nx);
+            setPlayerY(ny);
             return;
         }
         if( CellState.LAMBDA.equals(toMove)) {
-            setCell(playerX,playerY,CellState.EMPTY);
+            setCell(getPlayerX(), getPlayerY(),CellState.EMPTY);
             setCell(nx,ny,CellState.ROBOT);
-            playerX = nx;
-            playerY = ny;
-            lambdaCounter--;
+            setPlayerX(nx);
+            setPlayerY(ny);
+            setLambdaCounter(getLambdaCounter() - 1);
             collectedLambdas++;
             points += 25;
             return;
         }
 
         if( CellState.OPEN_LIFT.equals(toMove)) {
-            setCell(playerX,playerY,CellState.EMPTY);
+            setCell(getPlayerX(), getPlayerY(),CellState.EMPTY);
             setCell(nx,ny,CellState.ROBOT);
-            playerX = nx;
-            playerY = ny;
+            setPlayerX(nx);
+            setPlayerY(ny);
             onFinish();
             return;
         }
 //        If x0 = x + 1 and y0 = y (i.e. the Robot moves right), (x0; y0) is a Rock, and (x + 2; y) is Empty.
 //        – Additionally, the Rock moves to (x + 2; y).
-        if( nx == playerX+1 && ny == playerY &&
-                CellState.ROCK.equals(toMove) && CellState.EMPTY.equals(peekCell(playerX + 2, playerY))) {
-            setCell(playerX,playerY,CellState.EMPTY);
+        if( nx == getPlayerX() +1 && ny == getPlayerY() &&
+                CellState.ROCK.equals(toMove) && CellState.EMPTY.equals(peekCell(getPlayerX() + 2, getPlayerY()))) {
+            setCell(getPlayerX(), getPlayerY(),CellState.EMPTY);
             setCell(nx,ny,CellState.ROBOT);
-            setCell(playerX+2,playerY,CellState.ROCK);
-            playerX = nx;
-            playerY = ny;
+            setCell(getPlayerX() +2, getPlayerY(),CellState.ROCK);
+            setPlayerX(nx);
+            setPlayerY(ny);
             return;
         }
 //        If x0 = x 􀀀 1 and y0 = y (i.e. the Robot moves left), (x0; y0) is a Rock, and (x 􀀀 2; y) is Empty.
 //        – Additionally, the Rock moves to (x 􀀀 2; y).
-        if( nx == playerX-1 && ny == playerY &&
-                CellState.ROCK.equals(toMove) && CellState.EMPTY.equals(peekCell(playerX - 2, playerY))) {
-            setCell(playerX,playerY,CellState.EMPTY);
+        if( nx == getPlayerX() -1 && ny == getPlayerY() &&
+                CellState.ROCK.equals(toMove) && CellState.EMPTY.equals(peekCell(getPlayerX() - 2, getPlayerY()))) {
+            setCell(getPlayerX(), getPlayerY(),CellState.EMPTY);
             setCell(nx,ny,CellState.ROBOT);
-            setCell(playerX-2,playerY,CellState.ROCK);
-            playerX = nx;
-            playerY = ny;
+            setCell(getPlayerX() -2, getPlayerY(),CellState.ROCK);
+            setPlayerX(nx);
+            setPlayerY(ny);
             return;
         }
 
@@ -174,7 +162,7 @@ public class FieldControl {
 
 //                 If (x; y) contains a Closed Lambda Lift, and there are no Lambdas remaining:
 //                – (x; y) is updated to Open Lambda Lift.
-                if(peekCell(x,y) == (CellState.CLOSED_LIFT) && lambdaCounter == 0 ){
+                if(peekCell(x,y) == (CellState.CLOSED_LIFT) && getLambdaCounter() == 0 ){
                     setCell(x,y,CellState.OPEN_LIFT);
                 }
 //                 In all other cases, (x; y) remains unchanged.
@@ -223,5 +211,29 @@ public class FieldControl {
 
     public FieldState getState() {
         return oldState;
+    }
+
+    private int getPlayerX() {
+        return oldState.getPlayerX();
+    }
+
+    private void setPlayerX(int playerX) {
+        newState.setPlayerX(playerX);
+    }
+
+    private int getPlayerY() {
+        return oldState.getPlayerY();
+    }
+
+    private void setPlayerY(int playerY) {
+        newState.setPlayerY(playerY);
+    }
+
+    private int getLambdaCounter() {
+        return oldState.getLambdaCounter();
+    }
+
+    private void setLambdaCounter(int lambdaCounter) {
+        newState.setLambdaCounter(lambdaCounter);
     }
 }

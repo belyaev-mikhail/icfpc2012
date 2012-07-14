@@ -25,7 +25,7 @@ public class MainClassAuto {
                 "#########\n" +
                 "#.....*.#\n" +
                 "#.#...*.#\n" +
-                "L  #   R#\n" +
+                "L  #.. R#\n" +
                 "#\\ #... #\n" +
                 "#########\n";
 
@@ -74,8 +74,8 @@ public class MainClassAuto {
                 Move move = walker.buildRoute(fs.getState());
                 System.out.println(move);
 
-                fs.startChange();
                 fs.playerMove(move);
+                fs.startChange();
                 fs.step();
                 fs.commitChange();
 
