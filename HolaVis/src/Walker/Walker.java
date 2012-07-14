@@ -125,6 +125,11 @@ public class Walker {
                     open.add(p);
                 }
             }
+
+            if (open.isEmpty()) {
+                sel = from;
+                break;
+            }
             sel = Collections.min(open, new Comparator<Point>() {
                 @Override
                 public int compare(Point o1, Point o2) {
@@ -234,7 +239,6 @@ public class Walker {
     }
 
     public static boolean pointWalkable(Point p, FieldState field) {
-        System.out.println(p);
         CellState cell = field.peekCell(p.getX(), p.getY());
         if (cell == null) {
             return false;
@@ -248,6 +252,13 @@ public class Walker {
                 return true;
         }
     }
+
+//    public static boolean pointDangerous(Point p, FieldState field) {
+//        Point pp = new Point(p.getX(), p.getY() + 2);
+//        if (pointInsideBox(pp)) {
+//
+//        }
+//    }
 
     public static boolean pointInsideBox(Point p, FieldState field) {
         if (p.getX() < 0 || p.getX() >= field.getWidth()) {
@@ -325,6 +336,11 @@ public class Walker {
                 minLen = route.size();
                 hasRoute = true;
             }
+        }
+
+        if (guessRoute != null || guessRoute.size() >= 2) {
+            System.out.println("next step");
+            System.out.println(guessRoute);
         }
 
         if (!hasRoute){
