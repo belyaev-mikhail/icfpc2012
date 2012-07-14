@@ -14,10 +14,18 @@ public class FieldState {
     private int playerX = 0;
     private int playerY = 0;
 
+    private int water = 0;
+    private int flooding = 0;
+    private int waterproof = 10;
+
     private FieldState(FieldState that) {
         lambdaCounter = that.lambdaCounter;
         playerX = that.playerX;
         playerY = that.playerY;
+
+        water = that.water;
+        flooding = that.flooding;
+        waterproof = that.waterproof;
 
         for(List<CellState> row: that.cells) {
             cells.add(new LinkedList<CellState>(row));
