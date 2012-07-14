@@ -32,6 +32,6 @@ public class ReadField {
     public static void main(String[] args) {
         final FieldControl fs = new FieldControl(readField());
 
-        System.out.println(fs);
+        System.out.println(fs.getState());
     }
 }
