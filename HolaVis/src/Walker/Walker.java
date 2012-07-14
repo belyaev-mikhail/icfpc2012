@@ -122,7 +122,13 @@ public class Walker {
             for (int i = 0; i < dy.length; i++) {
                 Point p = new Point(sel.getX() + dx[i], sel.getY() + dy[i], sel);
                 if (!open.contains(p) && !closed.contains(p) && pointWalkable(p, field) && pointInsideBox(p, field)) {
-                    open.add(p);
+                    if (p.getParent().equals(from)) {
+                        if (!pointDangerous(p, field)) {
+                            open.add(p);
+                        }
+                    } else {
+                        open.add(p);
+                    }
                 }
             }
 
@@ -252,13 +258,75 @@ public class Walker {
                 return true;
         }
     }
+    public boolean pointDangerous(Point p, FieldState field) {
+        // *
+        //
+        // rR     r new loc, R old loc
+        Point pp1 = new Point(p.getX(), p.getY() + 1);
+        Point pp2 = new Point(p.getX(), p.getY() + 2);
+        if (pointInsideBox(pp1, field) && pointInsideBox(pp2, field)) {
+            CellState c1 = getFieldCellState(pp1, field);
+            CellState c2 = getFieldCellState(pp2, field);
+            if (c1 != null && c2 != null) {
+                if (c1 == CellState.EMPTY && c2 == CellState.ROCK) {
+                    return true;
+                }
+            }
+        } else {
+            return false;
+        }
+        // *
+        // *
+        //  rR     r new loc, R old loc
+        Point pp3 = new Point(p.getX() - 1, p.getY() + 1);
+        Point pp4 = new Point(p.getX() - 1, p.getY() + 2);
+        if (pointInsideBox(pp3, field) && pointInsideBox(pp4, field)) {
+            CellState c1 = getFieldCellState(pp1, field);
+            CellState c2 = getFieldCellState(pp2, field);
+            CellState c3 = getFieldCellState(pp3, field);
+            CellState c4 = getFieldCellState(pp4, field);
+            if (c1 != null && c2 != null && c3 != null && c4 != null) {
+                if (c1 == CellState.EMPTY && c2 == CellState.EMPTY
+                        && c3 == CellState.ROCK
+                        && (c4 == CellState.ROCK || c4 == CellState.LAMBDA))  {
+                    return true;
+                }
+            }
+        }
+        //   *                               246
+        //   *                               135
+        // Rr      r new loc, R old loc     Rr
+        pp1 = new Point(p.getX(), p.getY() + 1);
+        pp2 = new Point(p.getX(), p.getY() + 2);
+        pp3 = new Point(p.getX() + 1, p.getY() + 1);
+        pp4 = new Point(p.getX() + 1, p.getY() + 2);
+        Point pp5 = new Point(p.getX() + 2, p.getY() + 1);
+        Point pp6 = new Point(p.getX() + 2, p.getY() + 2);
 
-//    public static boolean pointDangerous(Point p, FieldState field) {
-//        Point pp = new Point(p.getX(), p.getY() + 2);
-//        if (pointInsideBox(pp)) {
-//
-//        }
-//    }
+        if (pointInsideBox(pp3, field) && pointInsideBox(pp4, field)
+                && pointInsideBox(pp5, field) && pointInsideBox(pp6, field)) {
+            CellState c1 = getFieldCellState(pp1, field);
+            CellState c2 = getFieldCellState(pp2, field);
+            CellState c3 = getFieldCellState(pp3, field);
+            CellState c4 = getFieldCellState(pp4, field);
+            CellState c5 = getFieldCellState(pp5, field);
+            CellState c6 = getFieldCellState(pp6, field);
+            if (c1 != null && c2 != null && c3 != null && c4 != null && c5 != null && c6 != null) {
+                if (c1 == CellState.EMPTY && c2 == CellState.EMPTY
+                        && c3 == CellState.ROCK && c4 == CellState.ROCK
+                        && c5 != CellState.EMPTY && c6 != CellState.EMPTY)  {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+
+
+    public static CellState getFieldCellState(Point p, FieldState field) {
+        return field.peekCell(p.getX(), p.getY());
+    }
 
     public static boolean pointInsideBox(Point p, FieldState field) {
         if (p.getX() < 0 || p.getX() >= field.getWidth()) {

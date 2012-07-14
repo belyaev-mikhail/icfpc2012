@@ -1,6 +1,7 @@
 package Vis;
 
 import Walker.Move;
+import com.sun.org.apache.xpath.internal.SourceTree;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -14,27 +15,76 @@ public class FieldState {
     private int playerX = 0;
     private int playerY = 0;
 
+    private int water = 0;
+    private int flooding = 0;
+    private int waterproof = 10;
+
     private FieldState(FieldState that) {
         lambdaCounter = that.lambdaCounter;
         playerX = that.playerX;
         playerY = that.playerY;
+
+        water = that.water;
+        flooding = that.flooding;
+        waterproof = that.waterproof;
 
         for(List<CellState> row: that.cells) {
             cells.add(new LinkedList<CellState>(row));
         }
     }
 
+    @Override
+    public String toString() {
+        return "FieldState{" +
+                "cells=" + cells +
+                ", lambdaCounter=" + lambdaCounter +
+                ", playerX=" + playerX +
+                ", playerY=" + playerY +
+                ", water=" + water +
+                ", flooding=" + flooding +
+                ", waterproof=" + waterproof +
+                '}';
+    }
+
     public FieldState(String repr) {
         StringTokenizer tkn = new StringTokenizer(repr, "\n", false);
-        String token;
+        String token = "";
+
+        boolean hasWater = false;
+
         while( tkn.hasMoreTokens() ) {
             token = tkn.nextToken();
+            if (token.startsWith("Water")) {
+                hasWater = true;
+                break;
+            }
             List<CellState> row = new LinkedList<CellState>();
             cells.add(row);
             for (char c: token.toCharArray()) {
                 CellState toPut = CellState.makeCellState(c);
                 row.add(toPut);
                 if(toPut.equals(CellState.LAMBDA)) lambdaCounter++;
+            }
+        }
+
+        if (hasWater && tkn.hasMoreTokens()) {
+            try {
+                String[] waterDef = token.split("\\s");
+                if (waterDef.length >= 2 && waterDef[0].equals("Water")) {
+                    this.water = Integer.parseInt(waterDef[1]);
+                }
+
+                String[] floodDef = tkn.nextToken().split("\\s");
+                if (floodDef.length >= 2 && floodDef[0].equals("Flooding")) {
+                    this.flooding = Integer.parseInt(floodDef[1]);
+                }
+
+                String[] proofDef = tkn.nextToken().split("\\s");
+                if (proofDef.length >= 2 && proofDef[0].equals("Waterproof")) {
+                    this.waterproof = Integer.parseInt(proofDef[1]);
+                }
+            } catch(Exception e) {
+                System.out.println(e);
             }
         }
 
