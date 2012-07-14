@@ -76,14 +76,18 @@ public class MainClassAuto {
 
             private void sendSignal() {
 
+                if(fs.isGameStopped()) return;
+
                 final Walker walker = new Walker();
                 Move move = walker.buildRoute(fs.getState());
                 System.out.println(move);
 
-                fs.playerMove(move);
-                fs.startChange();
-                fs.step();
-                fs.commitChange();
+                {
+                    fs.playerMove(move);
+                    fs.startChange();
+                    fs.step();
+                    fs.commitChange();
+                }
 
                 System.out.println("Current points: " + fs.getPoints());
             }

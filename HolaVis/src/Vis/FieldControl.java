@@ -2,6 +2,7 @@ package Vis;
 
 import Walker.Move;
 
+import java.awt.*;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -11,6 +12,8 @@ public class FieldControl {
 
     private int collectedLambdas = 0;
     private int points = 0;
+
+    private boolean gameStopped = false;
 
     public FieldControl(String repr) {
         oldState = new FieldState(repr);
@@ -124,6 +127,8 @@ public class FieldControl {
             return;
         }
 
+
+
     }
 
     public void step() {
@@ -145,7 +150,7 @@ public class FieldControl {
 //                 If (x; y) contains a Rock, (x; y - 1) contains a Rock, either (x + 1; y) is not Empty or (x + 1; y - 1)
 //                is not Empty, (x - 1; y) is Empty and (x - 1; y - 1) is Empty:
 //                – (x; y) is updated to Empty, (x - 1; y - 1) is updated to Rock.
-                if(peekCell(x,y) == (CellState.ROCK) &&
+                if(peekCell(x,y) == (CellState.ROCK) && peekCell(x,y-1) == (CellState.ROCK) &&
                         (peekCell(x+1,y) != (CellState.EMPTY) || peekCell(x+1,y-1) != (CellState.EMPTY)) &&
                         peekCell(x-1,y) == (CellState.EMPTY) && peekCell(x-1,y-1) == (CellState.EMPTY)){
                     setCell(x,y,CellState.EMPTY);
@@ -169,6 +174,17 @@ public class FieldControl {
             }
         }
 
+        // CHECK DEATH
+        for (int y = 0; y < getHeight() ; y++) {
+            for (int x = 0; x < getWidth(); x++) {
+                if(CellState.ROBOT.equals(newState.peekCell(x,y)) &&
+                        CellState.ROCK.equals(newState.peekCell(x,y+1)) &&
+                        CellState.EMPTY.equals(oldState.peekCell(x,y+1))) {
+                    onDeath();
+                }
+            }
+        }
+
     }
 
     private List<FieldControlListener> listeners = new LinkedList<FieldControlListener>();
@@ -187,19 +203,29 @@ public class FieldControl {
         }
     }
 
+    void stopGame() {
+        gameStopped = true;
+    }
+
+    public boolean isGameStopped() {
+        return gameStopped;
+    }
+
     void onDeath() {
+        stopGame();
         System.out.println("You lost!");
         System.out.println("Points: " + points);
     }
 
     void onAbort() {
+        stopGame();
         System.out.println("Aborted!");
         points += collectedLambdas*25;
         System.out.println("Points: " + points);
     }
 
     void onFinish() {
-
+        stopGame();
         System.out.println("You won!");
         points += collectedLambdas*50;
         System.out.println("Points: " + points);

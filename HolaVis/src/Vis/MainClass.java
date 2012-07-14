@@ -82,6 +82,8 @@ public class MainClass {
 
                 FieldControl fs = gf.getFieldControl();
 
+                if(fs.isGameStopped()) return;
+
                 System.out.println(fs);
                 fs.playerMove(move);
                 fs.startChange();
