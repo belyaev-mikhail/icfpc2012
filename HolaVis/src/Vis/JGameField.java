@@ -25,6 +25,12 @@ public class JGameField extends JPanel implements FieldControlListener {
         fancies.put('L',  new ImageIcon(JGameField.class.getResource("Res/small-CL.png")) );
         fancies.put('O',  new ImageIcon(JGameField.class.getResource("Res/small-OL.png")) );
         fancies.put(' ',  new ImageIcon(JGameField.class.getResource("Res/small-Empty.png")) );
+        for(char c : "ABCDEFGHI".toCharArray()) {
+            fancies.put(c, new ImageIcon(JGameField.class.getResource("Res/small-Tram.png")));
+        }
+        for(char c : "123456789".toCharArray()) {
+            fancies.put(c, new ImageIcon(JGameField.class.getResource("Res/small-T.png")));
+        }
     }
 
     private static Map<Character, Icon> fanciesWater = new HashMap<Character, Icon>(8);
@@ -37,6 +43,12 @@ public class JGameField extends JPanel implements FieldControlListener {
         fanciesWater.put('L',  new ImageIcon(JGameField.class.getResource("Res/blue-small-CL.png")) );
         fanciesWater.put('O',  new ImageIcon(JGameField.class.getResource("Res/blue-small-OL.png")) );
         fanciesWater.put(' ',  new ImageIcon(JGameField.class.getResource("Res/blue-small-Empty.png")) );
+        for(char c : "ABCDEFGHI".toCharArray()) {
+            fanciesWater.put(c, new ImageIcon(JGameField.class.getResource("Res/blue-small-Tram.png")));
+        }
+        for(char c : "123456789".toCharArray()) {
+            fanciesWater.put(c, new ImageIcon(JGameField.class.getResource("Res/blue-small-T.png")));
+        }
     }
 
     public JGameField(FieldControl fs) {

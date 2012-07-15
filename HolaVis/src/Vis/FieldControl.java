@@ -2,29 +2,39 @@ package Vis;
 
 import Walker.FinishState;
 import Walker.Move;
-import Walker.Walker.Point;
 
-import javax.swing.event.ChangeEvent;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
+import java.util.Map;
 
 public class FieldControl {
-    class Change {
+    public static class Cell {
         int x;
         int y;
         CellState cs;
 
-        Change(int x, int y, CellState cs) {
+        public Cell(int x, int y, CellState cs) {
             this.x = x;
             this.y = y;
             this.cs = cs;
+        }
+
+        public int getX() {
+            return x;
+        }
+
+        public int getY() {
+            return y;
+        }
+
+        public CellState getCs() {
+            return cs;
         }
     }
 
     private FieldState oldState;
     //private FieldState newState;
-    LinkedList<Change> changes = new LinkedList<Change>();
+    LinkedList<Cell> cells = new LinkedList<Cell>();
 
     private int collectedLambdas = 0;
     private int totalTurns = 0;
@@ -45,10 +55,10 @@ public class FieldControl {
     }
 
     private void applyChanges() {
-        Change action = changes.poll();
+        Cell action = cells.poll();
         while(action != null) {
             oldState.setCell(action.x, action.y, action.cs);
-            action = changes.poll();
+            action = cells.poll();
         }
     }
     void startChange(){
@@ -78,7 +88,7 @@ public class FieldControl {
     }
 
     void setCell(final int x, final int y, final CellState cs) {
-        changes.add(new Change(x,y,cs));
+        cells.add(new Cell(x,y,cs));
 
     }
 
@@ -161,12 +171,56 @@ public class FieldControl {
             return;
         }
 
+        if(toMove.isTrampoline()) {
+            Map<Character,Character> tramps = oldState.getTrampolines();
+            System.out.println(tramps);
+            CellState target = CellState.makeCellState(tramps.get(toMove.getRep()));
+
+            System.out.println(toMove.getRep());
+            System.out.println(tramps.get(toMove.getRep()));
+            System.out.println(target);
+            int tx = -1,ty = -1;
+            outer:
+            for (int x = 0; x < getWidth(); x++) {
+                for (int y = 0; y < getHeight(); y++) {
+                    if(peekCell(x,y) == target) {
+                        tx = x;
+                        ty = y;
+                        break outer;
+                    }
+                }
+            }
+            System.out.println("tx = " + tx + ", ty = " + ty);
+
+            setCell(getPlayerX(), getPlayerY(),CellState.EMPTY);
+            setCell(tx, ty, CellState.ROBOT);
+            setCell(nx, ny, CellState.EMPTY);
+            for(Map.Entry<Character, Character> tramp : tramps.entrySet()) {
+                if(tramp.getValue().equals(target.getRep())) {
+                    CellState otherTramp = CellState.makeCellState(tramp.getKey());
+                    Cell trampCell = findByState(otherTramp);
+                    setCell(trampCell.x, trampCell.y, CellState.EMPTY);
+                }
+            }
+
+            setPlayerX(tx);
+            setPlayerY(ty);
+            return;
+
+        }
+
 
 
     }
 
+    Cell findByState(CellState cs) {
+        return oldState.findByState(cs);
+    }
+
+
+
     public void step() {
-        if(totalTurns != 1 && totalTurns % oldState.getFlooding() == 1) {
+        if(oldState.getFlooding() != 0 && totalTurns != 1 && totalTurns % oldState.getFlooding() == 1) {
             System.out.println("Turns: " + totalTurns + " Flooding: " + oldState.getWater());
             System.out.println("FLOOD!");
             oldState.setWater(oldState.getWater() + 1);
@@ -224,7 +278,7 @@ public class FieldControl {
             onDeath();
             return;
         }
-        for(Change c: changes) {
+        for(Cell c: cells) {
             if(CellState.ROBOT == (oldState.peekCell(c.x, c.y-1)) &&
                     c.cs == CellState.ROCK) {
                 onDeath();
@@ -319,7 +373,7 @@ public class FieldControl {
         FieldControl ret = new FieldControl();
         ret.oldState = this.oldState.clone();
         //ret.newState = this.newState.clone();
-        ret.changes = new LinkedList<Change>(this.changes);
+        ret.cells = new LinkedList<Cell>(this.cells);
 
         ret.points = this.points;
         ret.collectedLambdas = this.collectedLambdas;

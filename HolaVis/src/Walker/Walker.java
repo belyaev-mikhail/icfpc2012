@@ -100,7 +100,7 @@ public class Walker {
         }
     }
 
-    public Point aStar(FieldState field, Point from, final Point to, boolean fast) {
+    public Point aStar(final FieldState field, Point from, final Point to, boolean fast) {
         from.setParent(null);
         List<Point> open = new LinkedList<Point>();
         List<Point> closed = new LinkedList<Point>();
@@ -121,9 +121,15 @@ public class Walker {
             int[] dy = {0,1,0,-1};
             int[] dx = {1,0,-1,0};
 
+            CellState cellState = field.peekCell(sel.x,sel.y);
+            Point pivot = sel;
+            if(cellState.isTrampoline()) {
+                FieldControl.Cell cell = field.findTrampolineTarget(cellState);
+                pivot = new Point(cell.getX(), cell.getY(), sel.getParent());
+            }
             //System.out.println("a star");
             for (int i = 0; i < dy.length; i++) {
-                Point p = new Point(sel.getX() + dx[i], sel.getY() + dy[i], sel);
+                Point p = new Point(pivot.getX() + dx[i], pivot.getY() + dy[i], sel);
                 if (!open.contains(p) && !closed.contains(p) && pointWalkableFrom(sel, p, field) && pointInsideBox(p, field)) {
                     if (p.getParent().equals(from)) {
                         if (!pointDangerous(p, field)) {
@@ -135,6 +141,10 @@ public class Walker {
                 }
             }
 
+
+
+
+
             if (open.isEmpty()) {
                 sel = from;
                 break;
@@ -142,7 +152,7 @@ public class Walker {
             Collections.sort(open,  new Comparator<Point>() {
                 @Override
                 public int compare(Point o1, Point o2) {
-                    return (int)(routeCost(o1,to) - routeCost(o2,to));
+                    return (int)(routeCost(o1, to, field) - routeCost(o2, to, field));
                 }
             });
 
@@ -258,15 +268,22 @@ public class Walker {
     }
 
     public static int getParentPathSize(Point current) {
+        return getParentPathSize(current, null);
+    }
+    public static int getParentPathSize(Point current, FieldState fieldState) {
         int size = 0;
         for(Point p = current; p.getParent() != null; p = p.getParent()) {
+            if(fieldState != null && fieldState.peekCell(p.x,p.y).isTrampoline()) size += 25;
             size ++;
         }
         return  size;
     }
 
     public static double routeCost(Point current, Point stop) {
-        return getParentPathSize(current) + stop.diff(current);
+        return routeCost(current, stop, null);
+    }
+    public static double routeCost(Point current, Point stop, FieldState field) {
+        return getParentPathSize(current, field) + stop.diff(current);
     }
 
     public static boolean routeInsideBox(List<Point> route, FieldState field) {
@@ -463,7 +480,7 @@ public class Walker {
     }
 
     public List<Move> buildRoute(FieldControl control) {
-        FieldState field = control.getState();
+        final FieldState field = control.getState();
         this.control = control;
         List<Point> lambdas = getLambdas(field);
 
@@ -490,7 +507,7 @@ public class Walker {
             Collections.sort(fastLambdas, new Comparator<Point>() {
                 @Override
                 public int compare(Point o1, Point o2) {
-                    return getParentPathSize(o1) - getParentPathSize(o2);
+                    return getParentPathSize(o1, field) - getParentPathSize(o2, field);
                 }
             });
 

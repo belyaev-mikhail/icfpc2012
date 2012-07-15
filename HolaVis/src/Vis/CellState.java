@@ -33,8 +33,12 @@ public enum CellState {
        rep = c;
     }
 
-    boolean isTrampoline(){
+    public boolean isTrampoline(){
         return "ABCDEFGHI".indexOf(rep) != -1;
+    }
+
+    boolean isTarget(){
+        return "123456789".indexOf(rep) != -1;
     }
 
     char getRep() {
