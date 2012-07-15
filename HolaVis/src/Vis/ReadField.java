@@ -36,7 +36,6 @@ public class ReadField {
     }
 
     public static void main(String[] args) {
-        System.out.println(Arrays.asList(args));
         if (args.length >= 1 && args[0].equals("debug")) {
             final FieldControl fs = new FieldControl(readField());
             System.out.println(fs.getState());
