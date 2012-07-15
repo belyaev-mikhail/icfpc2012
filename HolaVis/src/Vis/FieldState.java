@@ -16,9 +16,9 @@ public class FieldState {
     private int flooding = 0;
     private int waterproof = 10;
 
-    public int getWater() {
-        return water;
-    }
+    // trampoline settings
+    private Map<Character,Character> tramp = new HashMap<Character, Character>();
+
 
     public void setWater(int water) {
         this.water = water;
@@ -68,19 +68,14 @@ public class FieldState {
     }
 
     public FieldState(String repr) {
-        StringTokenizer tkn = new StringTokenizer(repr, "\n", false);
+        String[] parts = repr.split("\n\n");
+        StringTokenizer tkn = new StringTokenizer(parts[0], "\n", false);
         String token = "";
-
-        boolean hasWater = false;
 
         List<String> strField = new LinkedList<String>();
 
         while( tkn.hasMoreTokens() ) {
             token = tkn.nextToken();
-            if (token.startsWith("Water")) {
-                hasWater = true;
-                break;
-            }
             strField.add(token);
         }
         int longestRow = Collections.max(strField, new Comparator<String>() {
@@ -102,21 +97,34 @@ public class FieldState {
             }
         }
 
-        if (hasWater && tkn.hasMoreTokens()) {
+        if (parts.length > 1) {
+            tkn = new StringTokenizer(parts[1], "\n", false);
+            token = "";
             try {
-                String[] waterDef = token.split("\\s");
-                if (waterDef.length >= 2 && waterDef[0].equals("Water")) {
-                    this.water = Integer.parseInt(waterDef[1]) - 1;
-                }
+                while (tkn.hasMoreTokens()) {
+                    token = tkn.nextToken();
+                    String[] keyValue = token.split("\\s");
+                    if (keyValue.length >= 2) {
+                        String key = keyValue[0];
+                        String value = keyValue[1];
 
-                String[] floodDef = tkn.nextToken().split("\\s");
-                if (floodDef.length >= 2 && floodDef[0].equals("Flooding")) {
-                    this.flooding = Integer.parseInt(floodDef[1]);
-                }
+                        if (key.equals("Water")) {
+                            this.water = Integer.parseInt(value);
 
-                String[] proofDef = tkn.nextToken().split("\\s");
-                if (proofDef.length >= 2 && proofDef[0].equals("Waterproof")) {
-                    this.waterproof = Integer.parseInt(proofDef[1]);
+                        } else if (key.equals("Flooding")) {
+                            this.flooding = Integer.parseInt(value);
+
+                        } else if (key.equals("Waterproof")) {
+                            this.waterproof = Integer.parseInt(value);
+
+                        } else if (key.equals("Trampoline")
+                                && keyValue.length == 4
+                                && keyValue[2].equals("targets")) {
+                            String src = value;
+                            String dst = keyValue[2];
+                            tramp.put(src.charAt(0), dst.charAt(0));
+                        }
+                    }
                 }
             } catch(Exception e) {
                 System.err.println("Format error:" + e);
