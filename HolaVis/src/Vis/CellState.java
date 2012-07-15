@@ -26,7 +26,8 @@ public enum CellState {
     TARGET_6('6'),
     TARGET_7('7'),
     TARGET_8('8'),
-    TARGET_9('9');
+    TARGET_9('9'),
+    LAMBDAROCK('@');
 
     char rep;
     CellState(char c) {
@@ -41,12 +42,16 @@ public enum CellState {
         return "123456789".indexOf(rep) != -1;
     }
 
+    boolean isRock(){
+        return this == ROCK || this == LAMBDAROCK;
+    }
+
     char getRep() {
         return rep;
     }
 
     static CellState makeCellState(char c) {
-        String possibles = "R#*\\LO. ABCDEFGHI123456789";
+        String possibles = "R#*\\LO. ABCDEFGHI123456789@";
         if(possibles.indexOf(c) == -1) return CellState.WALL;
         return CellState.values()[possibles.indexOf(c)];
     }

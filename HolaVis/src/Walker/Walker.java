@@ -517,6 +517,7 @@ public class Walker {
                     destination = top;
                     break;
                 } else {
+                    System.err.println("Taking slow route :(");
                     Point slow = aStar(field, robot, top, false);
                     fastLambdas.remove(top);
                     if (getParentPathSize(slow) != 0) {
