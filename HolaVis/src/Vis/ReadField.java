@@ -20,6 +20,8 @@ import java.util.List;
  */
 public class ReadField {
 
+    public static boolean keepWorking = true;
+
     public static String readField() {
         String str = "";
         try {
@@ -36,6 +38,17 @@ public class ReadField {
     }
 
     public static void main(String[] args) {
+
+        Runtime.getRuntime().addShutdownHook(new Thread()
+        {
+            @Override
+            public void run()
+            {
+                keepWorking = false;
+            }
+        });
+
+
         if (args.length >= 1 && args[0].equals("debug")) {
             final FieldControl fs = new FieldControl(readField());
             System.out.println(fs.getState());
@@ -45,10 +58,7 @@ public class ReadField {
 
         final FieldControl fs = new FieldControl(readField());
         List<Character> path = walkWithString(fs);
-        for (Character character : path) {
-            System.out.print(character);
-        }
-        System.out.flush();
+
     }
 
     public static List<Character> walkWithString(FieldControl fs) {
@@ -56,7 +66,7 @@ public class ReadField {
 
         boolean gameStopped = false;
 
-        while(!fs.isGameStopped()) {
+        while(!fs.isGameStopped() && keepWorking) {
             final Walker walker = new Walker();
             List<Move> moves = walker.buildRoute(fs);
 
@@ -71,12 +81,15 @@ public class ReadField {
                 fs.commitChange();
 
                 allMoves.add(move.getRep());
+                System.out.print(move.getRep());
+                System.out.flush();
 
                 if(fs.isGameStopped()) {
                     break;
                 }
             }
         }
+
         return allMoves;
     }
 }

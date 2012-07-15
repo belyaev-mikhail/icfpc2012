@@ -1,3 +1,4 @@
 syntax: glob
 HolaVis/out/*
 HolaVis/.idea/*
+catch

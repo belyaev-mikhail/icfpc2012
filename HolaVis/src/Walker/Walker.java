@@ -311,6 +311,7 @@ public class Walker {
         }
         switch(cell) {
             case ROCK:
+            case LAMBDAROCK:
                 if(from == null) return false;
                 else if(from.getX() < p.getX() && field.peekCell(p.getX()+1, p.getY()) == CellState.EMPTY) {
                     return true;
@@ -357,8 +358,8 @@ public class Walker {
             CellState c4 = getFieldCellState(pp4, field);
             if (c1 != null && c2 != null && c3 != null && c4 != null) {
                 if ((c1 == CellState.EMPTY || c1 == CellState.ROBOT) && c2 == CellState.EMPTY
-                        && c3 == CellState.ROCK
-                        && (c4 == CellState.ROCK || c4 == CellState.LAMBDA))  {
+                        && c3.isRock()
+                        && (c4.isRock() || c4 == CellState.LAMBDA))  {
                     return true;
                 }
             }
@@ -383,7 +384,7 @@ public class Walker {
             CellState c6 = getFieldCellState(pp6, field);
             if (c1 != null && c2 != null && c3 != null && c4 != null && c5 != null && c6 != null) {
                 if ((c1 == CellState.EMPTY || c1 == CellState.ROBOT) && c2 == CellState.EMPTY
-                        && c3 == CellState.ROCK && c4 == CellState.ROCK
+                        && c3.isRock() && c4.isRock()
                         && c5 != CellState.EMPTY && c6 != CellState.EMPTY)  {
                     return true;
                 }

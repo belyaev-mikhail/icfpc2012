@@ -38,15 +38,15 @@ public enum CellState {
         return "ABCDEFGHI".indexOf(rep) != -1;
     }
 
-    boolean isTarget(){
+    public boolean isTarget(){
         return "123456789".indexOf(rep) != -1;
     }
 
-    boolean isRock(){
+    public boolean isRock(){
         return this == ROCK || this == LAMBDAROCK;
     }
 
-    char getRep() {
+    public char getRep() {
         return rep;
     }
 
