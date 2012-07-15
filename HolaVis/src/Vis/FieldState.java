@@ -3,14 +3,11 @@ package Vis;
 import Walker.Move;
 import com.sun.org.apache.xpath.internal.SourceTree;
 
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.StringTokenizer;
+import java.util.*;
 
 public class FieldState {
 
-    private List<List<CellState>> cells = new LinkedList<List<CellState>>();
+    private List<List<CellState>> cells = new ArrayList<List<CellState>>();
     private int lambdaCounter = 0;
     private int playerX = 0;
     private int playerY = 0;
@@ -29,7 +26,7 @@ public class FieldState {
         waterproof = that.waterproof;
 
         for(List<CellState> row: that.cells) {
-            cells.add(new LinkedList<CellState>(row));
+            cells.add(new ArrayList<CellState>(row));
         }
     }
 
@@ -52,15 +49,29 @@ public class FieldState {
 
         boolean hasWater = false;
 
+        List<String> strField = new LinkedList<String>();
+
         while( tkn.hasMoreTokens() ) {
             token = tkn.nextToken();
             if (token.startsWith("Water")) {
                 hasWater = true;
                 break;
             }
+            strField.add(token);
+        }
+        int longestRow = Collections.max(strField, new Comparator<String>() {
+            @Override
+            public int compare(String o1, String o2) {
+                return o1.length() - o2.length();
+            }
+        }).length();
+        for(String str: strField) {
+            while(str.length() < longestRow) {
+                str += ' ';
+            }
             List<CellState> row = new LinkedList<CellState>();
             cells.add(row);
-            for (char c: token.toCharArray()) {
+            for (char c: str.toCharArray()) {
                 CellState toPut = CellState.makeCellState(c);
                 row.add(toPut);
                 if(toPut.equals(CellState.LAMBDA)) lambdaCounter++;
@@ -84,7 +95,7 @@ public class FieldState {
                     this.waterproof = Integer.parseInt(proofDef[1]);
                 }
             } catch(Exception e) {
-                System.out.println(e);
+                System.err.println("Format error:" + e);
             }
         }
 

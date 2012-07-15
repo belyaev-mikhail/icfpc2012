@@ -1,32 +1,62 @@
 package Vis;
 
+import Walker.FinishState;
 import Walker.Move;
+import Walker.Walker.Point;
 
-import java.awt.*;
+import javax.swing.event.ChangeEvent;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 public class FieldControl {
+    class Change {
+        int x;
+        int y;
+        CellState cs;
+
+        Change(int x, int y, CellState cs) {
+            this.x = x;
+            this.y = y;
+            this.cs = cs;
+        }
+    }
+
     private FieldState oldState;
-    private FieldState newState;
+    //private FieldState newState;
+    LinkedList<Change> changes = new LinkedList<Change>();
 
     private int collectedLambdas = 0;
     private int points = 0;
 
     private boolean gameStopped = false;
+    private FinishState finishingState = null;
 
-    public FieldControl(String repr) {
-        oldState = new FieldState(repr);
-        newState = oldState;
+    public FinishState getFinishingState() {
+        return finishingState;
     }
 
+    private FieldControl() {}
+    public FieldControl(String repr) {
+        oldState = new FieldState(repr);
+        //newState = oldState;
+    }
+
+    private void applyChanges() {
+        Change action = changes.poll();
+        while(action != null) {
+            oldState.setCell(action.x, action.y, action.cs);
+            action = changes.poll();
+        }
+    }
     void startChange(){
-        newState = oldState.clone();
+        applyChanges();
+        //newState = oldState.clone();
     }
 
     void commitChange(){
-        oldState = newState;
-
+        //oldState = newState;
+        applyChanges();
         onChange();
     }
 
@@ -45,8 +75,9 @@ public class FieldControl {
         return oldState.peekCell(x,y);
     }
 
-    void setCell(int x, int y, CellState cs) {
-        newState.setCell(x, y, cs);
+    void setCell(final int x, final int y, final CellState cs) {
+        changes.add(new Change(x,y,cs));
+
     }
 
     public void playerMove(Move move) {
@@ -174,17 +205,14 @@ public class FieldControl {
             }
         }
 
-        // CHECK DEATH
-        for (int y = 0; y < getHeight() ; y++) {
-            for (int x = 0; x < getWidth(); x++) {
-                if(CellState.ROBOT.equals(newState.peekCell(x,y)) &&
-                        CellState.ROCK.equals(newState.peekCell(x,y+1)) &&
-                        CellState.EMPTY.equals(oldState.peekCell(x,y+1))) {
-                    onDeath();
-                }
+
+        for(Change c: changes) {
+            if(CellState.ROBOT == (oldState.peekCell(c.x, c.y-1)) &&
+                    c.cs == CellState.ROCK) {
+                onDeath();
+                return;
             }
         }
-
     }
 
     private List<FieldControlListener> listeners = new LinkedList<FieldControlListener>();
@@ -213,22 +241,20 @@ public class FieldControl {
 
     void onDeath() {
         stopGame();
-        System.out.println("You lost!");
-        System.out.println("Points: " + points);
+        finishingState = FinishState.DIE;
     }
 
     void onAbort() {
         stopGame();
-        System.out.println("Aborted!");
+        points += 1; // compensate for non-immediate abort
         points += collectedLambdas*25;
-        System.out.println("Points: " + points);
+        finishingState = FinishState.ABORT;
     }
 
     void onFinish() {
         stopGame();
-        System.out.println("You won!");
         points += collectedLambdas*50;
-        System.out.println("Points: " + points);
+        finishingState = FinishState.LIFT;
     }
 
     public int getPoints() {
@@ -244,7 +270,7 @@ public class FieldControl {
     }
 
     private void setPlayerX(int playerX) {
-        newState.setPlayerX(playerX);
+        oldState.setPlayerX(playerX);
     }
 
     private int getPlayerY() {
@@ -252,7 +278,7 @@ public class FieldControl {
     }
 
     private void setPlayerY(int playerY) {
-        newState.setPlayerY(playerY);
+        oldState.setPlayerY(playerY);
     }
 
     private int getLambdaCounter() {
@@ -260,6 +286,23 @@ public class FieldControl {
     }
 
     private void setLambdaCounter(int lambdaCounter) {
-        newState.setLambdaCounter(lambdaCounter);
+        oldState.setLambdaCounter(lambdaCounter);
+    }
+
+    public FieldControl clone() {
+        FieldControl ret = new FieldControl();
+        ret.oldState = this.oldState.clone();
+        //ret.newState = this.newState.clone();
+
+        ret.points = this.points;
+        ret.collectedLambdas = this.collectedLambdas;
+        ret.gameStopped = this.gameStopped;
+        ret.finishingState = this.finishingState;
+
+        return ret;
+    }
+
+    public boolean playerIsDead() {
+        return finishingState == FinishState.DIE;
     }
 }

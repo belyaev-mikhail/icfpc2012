@@ -7,6 +7,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeListener;
+import java.util.LinkedList;
+import java.util.List;
 
 public class MainClass {
 
@@ -45,6 +47,8 @@ public class MainClass {
         final JTextArea fieldText = new JTextArea(testField);
         fieldText.setFont(new Font("Courier New",0,11));
         pane.add(fieldText);
+
+        final List<Move> allMoves = new LinkedList<Move>();
 
         final ArrowController arrows = new ArrowController(pane) {
 
