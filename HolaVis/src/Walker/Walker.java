@@ -19,13 +19,13 @@ import static Vis.CellState.*;
 public class Walker {
     FieldControl control;
 
-    List<Point> lambdas;
-
     Point robot;
 
     Moves moves = new Moves(0, 0);
 
     Random rnd = new Random();
+
+    public static final int TOP_LAMBDAS = 30;
 
     public class Point{
         int x;
@@ -421,8 +421,8 @@ public class Walker {
         return route2;
     }
 
-    public void set(FieldState field) {
-        this.lambdas = new LinkedList<Point>();
+    public List<Point> getLambdas(FieldState field) {
+        List<Point> lambdas = new LinkedList<Point>();
 
         for(int x = 0; x < field.getWidth(); x++) {
             for(int y = 0; y <field.getHeight(); y++) {
@@ -439,12 +439,33 @@ public class Walker {
                 }
             }
         }
+        return lambdas;
+    }
+
+    public List<Point> getTopLambdas(List<Point> ls, Point robot) {
+        List<Point> top = new LinkedList<Point>();
+        List<Point> lls = new LinkedList<Point>(ls);
+
+        final Point r = robot;
+
+        while (top.size() < TOP_LAMBDAS && !lls.isEmpty()) {
+            Point min = Collections.min(lls, new Comparator<Point>() {
+                @Override
+                public int compare(Point o1, Point o2) {
+                    return (int) (routeCost(r, o1) - routeCost(r, o2));
+                }
+            });
+            top.add(min);
+            lls.remove(min);
+        }
+
+        return top;
     }
 
     public List<Move> buildRoute(FieldControl control) {
         FieldState field = control.getState();
         this.control = control;
-        this.set(field);
+        List<Point> lambdas = getLambdas(field);
 
         Point robot = new Point(field.getPlayerX(), field.getPlayerY());
 
@@ -453,6 +474,7 @@ public class Walker {
         List<Move> guessRoute = new LinkedList<Move>();
 
         Point destination = robot;
+        //lambdas = getTopLambdas(lambdas, robot);
 
         //System.out.println("routes:");
         List<Point> fastLambdas = new LinkedList<Point>();
