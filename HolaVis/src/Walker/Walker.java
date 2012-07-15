@@ -2,6 +2,7 @@ package Walker;
 
 import Vis.CellState;
 import Vis.FieldControl;
+import Vis.FieldPlayback;
 import Vis.FieldState;
 
 import java.util.*;
@@ -16,7 +17,7 @@ import static Vis.CellState.*;
  * To change this template use File | Settings | File Templates.
  */
 public class Walker {
-    FieldControl field;
+    FieldControl control;
 
     List<Point> lambdas;
 
@@ -99,7 +100,72 @@ public class Walker {
         }
     }
 
-    public List<Point> findRoute2(FieldState field, Point from, final Point to) {
+    public Point aStar(FieldState field, Point from, final Point to, boolean fast) {
+        from.setParent(null);
+        List<Point> open = new LinkedList<Point>();
+        List<Point> closed = new LinkedList<Point>();
+        List<Point> route = new LinkedList<Point>();
+
+        Point sel;
+        sel = from;
+
+        open.add(sel);
+        for(;;){
+            if(sel.equals(to) || open.isEmpty()) {
+                break;
+            }
+
+            closed.add(sel);
+            open.remove(sel);
+
+            int[] dy = {0,1,0,-1};
+            int[] dx = {1,0,-1,0};
+
+            //System.out.println("a star");
+            for (int i = 0; i < dy.length; i++) {
+                Point p = new Point(sel.getX() + dx[i], sel.getY() + dy[i], sel);
+                if (!open.contains(p) && !closed.contains(p) && pointWalkableFrom(sel, p, field) && pointInsideBox(p, field)) {
+                    if (p.getParent().equals(from)) {
+                        if (!pointDangerous(p, field)) {
+                            open.add(p);
+                        }
+                    } else {
+                        open.add(p);
+                    }
+                }
+            }
+
+            if (open.isEmpty()) {
+                sel = from;
+                break;
+            }
+            Collections.sort(open,  new Comparator<Point>() {
+                @Override
+                public int compare(Point o1, Point o2) {
+                    return (int)(routeCost(o1,to) - routeCost(o2,to));
+                }
+            });
+
+            while(!open.isEmpty()){
+                Point p = open.get(0);
+                if (fast) {
+                    sel = p;
+                    break;
+                } else {
+                    if(routePlaybackOk(p)) {
+                        sel = p;
+                        break;
+                    } else {
+                        open.remove(p);
+                    }
+                }
+            }
+        }
+
+        return sel;
+    }
+
+    public List<Move> findRoute2(FieldState field, Point from, final Point to) {
         from.setParent(null);
         List<Point> open = new LinkedList<Point>();
         List<Point> closed = new LinkedList<Point>();
@@ -119,14 +185,13 @@ public class Walker {
             int[] dy = {0,1,0,-1};
             int[] dx = {1,0,-1,0};
 
+            System.out.println("a star");
             for (int i = 0; i < dy.length; i++) {
                 Point p = new Point(sel.getX() + dx[i], sel.getY() + dy[i], sel);
-                if (!open.contains(p) && !closed.contains(p) && pointWalkable(p, field) && pointInsideBox(p, field)) {
+                if (!open.contains(p) && !closed.contains(p) && pointWalkableFrom(sel, p, field) && pointInsideBox(p, field)) {
                     if (p.getParent().equals(from)) {
                         if (!pointDangerous(p, field)) {
                             open.add(p);
-                        } else {
-                            System.out.println("Point danger: " + p);
                         }
                     } else {
                         open.add(p);
@@ -138,21 +203,58 @@ public class Walker {
                 sel = from;
                 break;
             }
-            sel = Collections.min(open, new Comparator<Point>() {
+            Collections.sort(open,  new Comparator<Point>() {
                 @Override
                 public int compare(Point o1, Point o2) {
                     return (int)(routeCost(o1,to) - routeCost(o2,to));
                 }
             });
 
+            while(!open.isEmpty()){
+                Point p = open.get(0);
+                System.out.println("Test playback:" + p);
+                if(routePlaybackOk(p)) {
+                    System.out.println("Ok path:" + p);
+                    sel = p;
+                    break;
+                } else {
+                    System.out.println("Excluding death point:" + p);
+                    open.remove(p);
+                }
+            }
         }
 
-        List<Point> route = new LinkedList<Point>();
-        for(Point it = sel; it != null; it = it.getParent()) {
-            route.add(it);
+        List<Move> moves = new LinkedList<Move>();
+        Point p = sel;
+        while(p.getParent() != null) {
+            moves.add(getDxDy(p.getParent(), p));
+            p = p.getParent();
         }
-        Collections.reverse(route);
-        return route;
+        Collections.reverse(moves);
+
+        return moves;
+    }
+
+    public  List<Move>  getMovesFromPoint(Point pp) {
+        List<Move> moves = new LinkedList<Move>();
+        Point p = pp;
+        while(p.getParent() != null) {
+            moves.add(getDxDy(p.getParent(), p));
+            p = p.getParent();
+        }
+        Collections.reverse(moves);
+        return moves;
+    }
+
+    public boolean routePlaybackOk(Point open) {
+        List<Move> moves = getMovesFromPoint(open);
+
+        FieldPlayback playback = new FieldPlayback(moves, control);
+        playback.play();
+
+        FieldControl result = playback.getFieldControl();
+
+        return !result.playerIsDead();
     }
 
     public static int getParentPathSize(Point current) {
@@ -165,67 +267,6 @@ public class Walker {
 
     public static double routeCost(Point current, Point stop) {
         return getParentPathSize(current) + stop.diff(current);
-    }
-
-    public List<Point> findRoute(FieldState field, Point from, Point to) {
-        int dx = (to.getX() - from.getX()) > 0 ? 1 : -1;
-        int dy = (to.getY() - from.getY()) > 0 ? 1 : -1;
-
-        List<Point> route = new LinkedList<Point>();
-        int xx = from.getX();
-        int yy = from.getY();
-        route.add(new Point(xx, yy));
-        while( xx != to.getX()) {
-            xx += dx;
-            route.add(new Point(xx, yy));
-        }
-        while ( yy != to.getY()) {
-            yy += dy;
-            route.add(new Point(xx, yy));
-        }
-
-
-        boolean routeValid = routeValid(route, field);
-
-        if (!routeValid) {
-            boolean leftValid = false;
-            boolean leftInBox = true;
-
-            List<Point> leftRoute = route;
-            while(!leftValid && leftInBox) {
-                leftRoute = getValidRoute(leftRoute, field, true);
-                leftValid = routeValid(leftRoute, field);
-                leftInBox = routeInsideBox(leftRoute, field);
-            }
-
-            boolean rightValid = false;
-            boolean rightInBox = true;
-
-            List<Point> rightRoute = route;
-            while(!rightValid && rightInBox) {
-                rightRoute = getValidRoute(rightRoute, field, false);
-                rightValid = routeValid(rightRoute, field);
-                rightInBox = routeInsideBox(rightRoute, field);
-            }
-
-            int leftLen = (leftValid && leftInBox) ? leftRoute.size() : -1;
-            int rightLen = (rightValid && rightInBox) ? rightRoute.size() : -1;
-
-            if (leftLen != -1 && rightLen != -1) {
-                if (leftLen > rightLen) {
-                    route = leftRoute;
-                } else {
-                    route = rightRoute;
-                }
-            } else if (leftLen != -1) {
-                route = leftRoute;
-            } else if (rightLen != -1) {
-                route = rightRoute;
-            } else {
-                route = new LinkedList<Point>();
-            }
-        }
-        return route;
     }
 
     public static boolean routeInsideBox(List<Point> route, FieldState field) {
@@ -246,19 +287,29 @@ public class Walker {
         return true;
     }
 
-    public static boolean pointWalkable(Point p, FieldState field) {
+    public static boolean pointWalkableFrom(Point from, Point p, FieldState field) {
         CellState cell = field.peekCell(p.getX(), p.getY());
         if (cell == null) {
             return false;
         }
         switch(cell) {
             case ROCK:
+                if(from == null) return false;
+                else if(from.getX() < p.getX() && field.peekCell(p.getX()+1, p.getY()) == CellState.EMPTY) {
+                    return true;
+                } else if(from.getX() > p.getX() && field.peekCell(p.getX()-1, p.getY()) == CellState.EMPTY) {
+                    return true;
+                } else return false;
             case WALL:
             case CLOSED_LIFT:
                 return false;
             default:
                 return true;
         }
+    }
+
+    public static boolean pointWalkable(Point p, FieldState field) {
+        return pointWalkableFrom(null, p, field);
     }
     public boolean pointDangerous(Point p, FieldState field) {
         // *
@@ -390,40 +441,51 @@ public class Walker {
         }
     }
 
-    public Move buildRoute(FieldState field) {
+    public List<Move> buildRoute(FieldControl control) {
+        FieldState field = control.getState();
+        this.control = control;
         this.set(field);
 
         Point robot = new Point(field.getPlayerX(), field.getPlayerY());
 
         boolean hasRoute = false;
         int minLen = Integer.MAX_VALUE;
-        List<Point> guessRoute = null;
+        List<Move> guessRoute = new LinkedList<Move>();
 
-        List<List<Point>> routes = new LinkedList<List<Point>>();
+        Point destination = robot;
+
+        //System.out.println("routes:");
+        List<Point> fastLambdas = new LinkedList<Point>();
         for(Point lp : lambdas) {
-            List<Point> route = findRoute2(field, robot, lp);
-            routes.add(route);
-            if (route.size() !=0 && route.size() < minLen && route.size() > 1) {
-                guessRoute = route;
-                minLen = route.size();
-                hasRoute = true;
+            Point sel = aStar(field, robot, lp, true);
+            if (getParentPathSize(sel) != 0) {
+                fastLambdas.add(sel);
+            }
+        }
+        while(!fastLambdas.isEmpty()) {
+            Collections.sort(fastLambdas, new Comparator<Point>() {
+                @Override
+                public int compare(Point o1, Point o2) {
+                    return getParentPathSize(o1) - getParentPathSize(o2);
+                }
+            });
+
+            if (!fastLambdas.isEmpty()) {
+                Point top = fastLambdas.get(0);
+                if (routePlaybackOk(top)) {
+                    destination = top;
+                    break;
+                } else {
+                    Point slow = aStar(field, robot, top, false);
+                    fastLambdas.remove(top);
+                    if (getParentPathSize(slow) != 0) {
+                        fastLambdas.add(slow);
+                    }
+                }
             }
         }
 
-        if (guessRoute != null && guessRoute.size() >= 2) {
-            System.out.println("next step");
-            System.out.println(guessRoute);
-            System.out.println("routes:");
-            for(List<Point> r : routes) {
-                System.out.println(r);
-            }
-        }
-
-        if (!hasRoute){
-            return Move.ABORT;
-        } else {
-            return guessRoute == null || guessRoute.size() < 2 ? Move.ABORT : getDxDy(guessRoute.get(0), guessRoute.get(1));
-        }
+        return getMovesFromPoint(destination);
     }
 
     Move getDxDy(Point start, Point next) {

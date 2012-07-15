@@ -4,9 +4,12 @@ import Walker.Move;
 import Walker.Walker;
 
 import javax.swing.*;
+import javax.swing.Timer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.*;
+import java.util.List;
 
 public class MainClassAuto {
 
@@ -43,6 +46,8 @@ public class MainClassAuto {
         final JGameField gf = new JGameField(fs);
         frame.getContentPane().add(gf);
 
+        final List<Character> allMoves = new LinkedList<Character>();
+
         new ArrowController(gf) {
 
 
@@ -50,13 +55,14 @@ public class MainClassAuto {
             @Override
             public void goUp() {
                 if(fs.isGameStopped()) return;
-                Timer timer = new Timer(300, new ActionListener() {
+                final Timer timer = new Timer(300,null);
+                timer.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         SwingUtilities.invokeLater(new Runnable() {
                             @Override
                             public void run() {
-                                sendSignal();
+                            if(!sendSignal()) timer.stop();
                                 //goUp();
                             }
                         });
@@ -93,22 +99,44 @@ public class MainClassAuto {
 
             }
 
-            private void sendSignal() {
+            private boolean sendSignal() {
 
-                if(fs.isGameStopped()) return;
+                if(fs.isGameStopped()) {
+                    System.out.println("Game finished with " + fs.getFinishingState());
+                    System.out.println("Points: " + fs.getPoints());
+                    return false;
+                }
 
                 final Walker walker = new Walker();
-                Move move = walker.buildRoute(fs.getState());
-                System.out.println(move);
+                List<Move> moves = walker.buildRoute(fs);
+                System.out.println(moves);
 
-                {
+                if (moves.isEmpty()) {
+                    moves.add(Move.ABORT);
+                }
+
+                for(Move move : moves) {
                     fs.playerMove(move);
                     fs.startChange();
                     fs.step();
                     fs.commitChange();
+
+                    allMoves.add(move.getRep());
+                    System.out.println("Your moves:");
+                    for(char m: allMoves) {
+                        System.out.print(m);
+                    }
+                    System.out.println();
+
+                    if(fs.isGameStopped()) {
+                        System.out.println("Game finished with " + fs.getFinishingState());
+                        System.out.println("Points: " + fs.getPoints());
+                        return false;
+                    }
                 }
 
                 System.out.println("Current points: " + fs.getPoints());
+                return true;
             }
         };
 

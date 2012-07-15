@@ -8,20 +8,20 @@ package Walker;
  * To change this template use File | Settings | File Templates.
  */
 public enum Move {
-    LEFT(0),
-    RIGHT(1),
-    UP(2),
-    DOWN(3),
-    WAIT(4),
-    ABORT(5);
+    LEFT('L'),
+    RIGHT('R'),
+    UP('U'),
+    DOWN('D'),
+    WAIT('W'),
+    ABORT('A');
 
-    int rep;
+    char rep;
 
-    private Move(int rep) {
+    private Move(char rep) {
         this.rep = rep;
     }
 
-    public int getRep() {
+    public char getRep() {
         return rep;
     }
 
