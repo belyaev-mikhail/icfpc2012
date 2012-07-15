@@ -262,11 +262,14 @@ public class FieldControl {
     }
 
     void onDeath() {
+        if(isGameStopped()) return;
         stopGame();
         finishingState = FinishState.DIE;
     }
 
     void onAbort() {
+        if(isGameStopped()) return;
+
         stopGame();
         points += 1; // compensate for non-immediate abort
         points += collectedLambdas*25;
@@ -274,6 +277,7 @@ public class FieldControl {
     }
 
     void onFinish() {
+        if(isGameStopped()) return;
         stopGame();
         points += collectedLambdas*50;
         finishingState = FinishState.LIFT;

@@ -19,6 +19,9 @@ public class FieldState {
     // trampoline settings
     private Map<Character,Character> tramp = new HashMap<Character, Character>();
 
+    public int getWater() {
+        return water;
+    }
 
     public void setWater(int water) {
         this.water = water;
@@ -109,7 +112,7 @@ public class FieldState {
                         String value = keyValue[1];
 
                         if (key.equals("Water")) {
-                            this.water = Integer.parseInt(value);
+                            this.water = Integer.parseInt(value) -1;
 
                         } else if (key.equals("Flooding")) {
                             this.flooding = Integer.parseInt(value);
