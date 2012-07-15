@@ -173,12 +173,12 @@ public class FieldControl {
 
         if(toMove.isTrampoline()) {
             Map<Character,Character> tramps = oldState.getTrampolines();
-            System.out.println(tramps);
+            //System.out.println(tramps);
             CellState target = CellState.makeCellState(tramps.get(toMove.getRep()));
 
-            System.out.println(toMove.getRep());
-            System.out.println(tramps.get(toMove.getRep()));
-            System.out.println(target);
+//            System.out.println(toMove.getRep());
+//            System.out.println(tramps.get(toMove.getRep()));
+//            System.out.println(target);
             int tx = -1,ty = -1;
             outer:
             for (int x = 0; x < getWidth(); x++) {
@@ -190,7 +190,7 @@ public class FieldControl {
                     }
                 }
             }
-            System.out.println("tx = " + tx + ", ty = " + ty);
+            //System.out.println("tx = " + tx + ", ty = " + ty);
 
             setCell(getPlayerX(), getPlayerY(),CellState.EMPTY);
             setCell(tx, ty, CellState.ROBOT);
@@ -221,8 +221,8 @@ public class FieldControl {
 
     public void step() {
         if(oldState.getFlooding() != 0 && totalTurns != 1 && totalTurns % oldState.getFlooding() == 1) {
-            System.out.println("Turns: " + totalTurns + " Flooding: " + oldState.getWater());
-            System.out.println("FLOOD!");
+//            System.out.println("Turns: " + totalTurns + " Flooding: " + oldState.getWater());
+//            System.out.println("FLOOD!");
             oldState.setWater(oldState.getWater() + 1);
         }
 
