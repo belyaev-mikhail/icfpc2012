@@ -151,10 +151,10 @@ public class FieldControl {
 //        If x0 = x + 1 and y0 = y (i.e. the Robot moves right), (x0; y0) is a Rock, and (x + 2; y) is Empty.
 //        – Additionally, the Rock moves to (x + 2; y).
         if( nx == getPlayerX() +1 && ny == getPlayerY() &&
-                CellState.ROCK.equals(toMove) && CellState.EMPTY.equals(peekCell(getPlayerX() + 2, getPlayerY()))) {
+                toMove.isRock() && CellState.EMPTY.equals(peekCell(getPlayerX() + 2, getPlayerY()))) {
             setCell(getPlayerX(), getPlayerY(),CellState.EMPTY);
             setCell(nx,ny,CellState.ROBOT);
-            setCell(getPlayerX() +2, getPlayerY(),CellState.ROCK);
+            setCell(getPlayerX() +2, getPlayerY(), toMove);
             setPlayerX(nx);
             setPlayerY(ny);
             return;
@@ -162,10 +162,10 @@ public class FieldControl {
 //        If x0 = x 􀀀 1 and y0 = y (i.e. the Robot moves left), (x0; y0) is a Rock, and (x 􀀀 2; y) is Empty.
 //        – Additionally, the Rock moves to (x 􀀀 2; y).
         if( nx == getPlayerX() -1 && ny == getPlayerY() &&
-                CellState.ROCK.equals(toMove) && CellState.EMPTY.equals(peekCell(getPlayerX() - 2, getPlayerY()))) {
+                toMove.isRock() && CellState.EMPTY.equals(peekCell(getPlayerX() - 2, getPlayerY()))) {
             setCell(getPlayerX(), getPlayerY(),CellState.EMPTY);
             setCell(nx,ny,CellState.ROBOT);
-            setCell(getPlayerX() -2, getPlayerY(),CellState.ROCK);
+            setCell(getPlayerX() -2, getPlayerY(), toMove);
             setPlayerX(nx);
             setPlayerY(ny);
             return;
@@ -234,40 +234,59 @@ public class FieldControl {
 
         for (int y = 0; y < getHeight() ; y++) {
             for (int x = 0; x < getWidth(); x++) {
+                CellState toMove = peekCell(x,y);
                 // If (x; y) contains a Rock, and (x; y - 1) is Empty:
 //                – (x; y) is updated to Empty, (x; y - 1) is updated to Rock.
-                if(peekCell(x,y) == CellState.ROCK && peekCell(x,y-1) == CellState.EMPTY) {
+                if(toMove.isRock() && peekCell(x,y-1) == CellState.EMPTY) {
                     setCell(x,y,CellState.EMPTY);
-                    setCell(x,y-1,CellState.ROCK);
+                    if(toMove == CellState.ROCK || peekCell(x,y-2) == CellState.EMPTY){
+                        setCell(x,y-1,toMove);
+                    } else if(toMove == CellState.LAMBDAROCK){
+                        setCell(x,y-1,CellState.LAMBDA);
+                    }
                 }
 //                 If (x; y) contains a Rock, (x; y -1) contains a Rock, (x+1; y) is Empty and (x+1; y 􀀀1) is Empty:
 //                – (x; y) is updated to Empty, (x + 1; y - 1) is updated to Rock.
-                if(peekCell(x,y) == CellState.ROCK && peekCell(x,y-1)== CellState.ROCK
+                if(toMove.isRock() && peekCell(x,y-1)== CellState.ROCK
                         && peekCell(x+1,y).equals(CellState.EMPTY) && peekCell(x+1, y-1).equals(CellState.EMPTY)) {
                     setCell(x,y,CellState.EMPTY);
-                    setCell(x+1,y-1,CellState.ROCK);
+                    if(toMove == CellState.ROCK || peekCell(x+1,y-2) == CellState.EMPTY){
+                        setCell(x+1,y-1,toMove);
+                    } else if(toMove == CellState.LAMBDAROCK) {
+                        setCell(x+1,y-1,CellState.LAMBDA);
+                    }
+
                 }
 //                 If (x; y) contains a Rock, (x; y - 1) contains a Rock, either (x + 1; y) is not Empty or (x + 1; y - 1)
 //                is not Empty, (x - 1; y) is Empty and (x - 1; y - 1) is Empty:
 //                – (x; y) is updated to Empty, (x - 1; y - 1) is updated to Rock.
-                if(peekCell(x,y) == (CellState.ROCK) && peekCell(x,y-1) == (CellState.ROCK) &&
+                if(toMove.isRock() && peekCell(x,y-1) == (CellState.ROCK) &&
                         (peekCell(x+1,y) != (CellState.EMPTY) || peekCell(x+1,y-1) != (CellState.EMPTY)) &&
                         peekCell(x-1,y) == (CellState.EMPTY) && peekCell(x-1,y-1) == (CellState.EMPTY)){
                     setCell(x,y,CellState.EMPTY);
-                    setCell(x-1,y-1,CellState.ROCK);
+                    if(toMove == CellState.ROCK || peekCell(x-1,y-2) == CellState.EMPTY){
+                        setCell(x-1,y-1,toMove);
+                    } else if(toMove == CellState.LAMBDAROCK){
+                        setCell(x-1,y-1,CellState.LAMBDA);
+                    }
                 }
 //                 If (x; y) contains a Rock, (x; y - 1) contains a Lambda, (x + 1; y) is Empty and (x + 1; y - 1) is
 //                Empty:
 //                – (x; y) is updated to Empty, (x + 1; y - 1) is updated to Rock.
-                if(peekCell(x,y) == (CellState.ROCK) && peekCell(x,y-1) == (CellState.LAMBDA)
+                if(toMove.isRock() && peekCell(x,y-1) == (CellState.LAMBDA)
                         && peekCell(x+1,y) == (CellState.EMPTY) && peekCell(x+1, y-1) == (CellState.EMPTY)) {
                     setCell(x,y,CellState.EMPTY);
-                    setCell(x+1,y-1,CellState.ROCK);
+                    if(toMove == CellState.ROCK || peekCell(x+1,y-2) == CellState.EMPTY){
+                        setCell(x+1,y-1,toMove);
+                    } else if(toMove == CellState.LAMBDAROCK) {
+                        setCell(x+1,y-1,CellState.LAMBDA);
+                    }
+
                 }
 
 //                 If (x; y) contains a Closed Lambda Lift, and there are no Lambdas remaining:
 //                – (x; y) is updated to Open Lambda Lift.
-                if(peekCell(x,y) == (CellState.CLOSED_LIFT) && getLambdaCounter() == 0 ){
+                if(toMove == (CellState.CLOSED_LIFT) && getLambdaCounter() == 0 ){
                     setCell(x,y,CellState.OPEN_LIFT);
                 }
 //                 In all other cases, (x; y) remains unchanged.
