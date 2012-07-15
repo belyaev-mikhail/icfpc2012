@@ -12,9 +12,33 @@ public class FieldState {
     private int playerX = 0;
     private int playerY = 0;
 
-    private int water = 0;
+    private int water = -1;
     private int flooding = 0;
     private int waterproof = 10;
+
+    public int getWater() {
+        return water;
+    }
+
+    public void setWater(int water) {
+        this.water = water;
+    }
+
+    public int getWaterproof() {
+        return waterproof;
+    }
+
+    public void setWaterproof(int waterproof) {
+        this.waterproof = waterproof;
+    }
+
+    public int getFlooding() {
+        return flooding;
+    }
+
+    public void setFlooding(int flooding) {
+        this.flooding = flooding;
+    }
 
     private FieldState(FieldState that) {
         lambdaCounter = that.lambdaCounter;
@@ -82,7 +106,7 @@ public class FieldState {
             try {
                 String[] waterDef = token.split("\\s");
                 if (waterDef.length >= 2 && waterDef[0].equals("Water")) {
-                    this.water = Integer.parseInt(waterDef[1]);
+                    this.water = Integer.parseInt(waterDef[1]) - 1;
                 }
 
                 String[] floodDef = tkn.nextToken().split("\\s");

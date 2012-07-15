@@ -27,6 +27,8 @@ public class FieldControl {
     LinkedList<Change> changes = new LinkedList<Change>();
 
     private int collectedLambdas = 0;
+    private int totalTurns = 0;
+    private int turnsInWater = 0;
     private int points = 0;
 
     private boolean gameStopped = false;
@@ -81,6 +83,7 @@ public class FieldControl {
     }
 
     public void playerMove(Move move) {
+        totalTurns ++;
         points -= 1;
         int nx = 0, ny = 0;
         switch (move) {
@@ -163,6 +166,18 @@ public class FieldControl {
     }
 
     public void step() {
+        if(totalTurns != 1 && totalTurns % oldState.getFlooding() == 1) {
+            System.out.println("Turns: " + totalTurns + " Flooding: " + oldState.getWater());
+            System.out.println("FLOOD!");
+            oldState.setWater(oldState.getWater() + 1);
+        }
+
+        if(getPlayerY() <= oldState.getWater()) {
+            turnsInWater++;
+        } else {
+            turnsInWater = 0;
+        }
+
         for (int y = 0; y < getHeight() ; y++) {
             for (int x = 0; x < getWidth(); x++) {
                 // If (x; y) contains a Rock, and (x; y - 1) is Empty:
@@ -205,7 +220,10 @@ public class FieldControl {
             }
         }
 
-
+        if(turnsInWater > oldState.getWaterproof()) {
+            onDeath();
+            return;
+        }
         for(Change c: changes) {
             if(CellState.ROBOT == (oldState.peekCell(c.x, c.y-1)) &&
                     c.cs == CellState.ROCK) {
@@ -237,6 +255,10 @@ public class FieldControl {
 
     public boolean isGameStopped() {
         return gameStopped;
+    }
+
+    public boolean isCellInWater(int x, int y) {
+        return y <= oldState.getWater();
     }
 
     void onDeath() {
@@ -293,11 +315,16 @@ public class FieldControl {
         FieldControl ret = new FieldControl();
         ret.oldState = this.oldState.clone();
         //ret.newState = this.newState.clone();
+        ret.changes = new LinkedList<Change>(this.changes);
 
         ret.points = this.points;
         ret.collectedLambdas = this.collectedLambdas;
         ret.gameStopped = this.gameStopped;
         ret.finishingState = this.finishingState;
+
+        ret.totalTurns = this.totalTurns;
+        ret.turnsInWater = this.turnsInWater;
+
 
         return ret;
     }

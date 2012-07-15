@@ -86,7 +86,16 @@ public class MainClass {
 
                 FieldControl fs = gf.getFieldControl();
 
-                if(fs.isGameStopped()) return;
+                if(fs.isGameStopped()) {
+                    System.out.println("Game finished with " + fs.getFinishingState());
+                    System.out.println("Points: " + fs.getPoints());
+                    System.out.println("Moves: ");
+                    for(Move mv: allMoves) {
+                        System.out.print(mv.getRep());
+                    }
+                    System.out.println();
+                    return;
+                }
 
                 System.out.println(fs);
                 fs.playerMove(move);
@@ -94,7 +103,19 @@ public class MainClass {
                 fs.step();
                 fs.commitChange();
 
-                System.out.println("Current points: " + fs.getPoints());
+                allMoves.add(move);
+                if(fs.isGameStopped()) {
+                    System.out.println("Game finished with " + fs.getFinishingState());
+                    System.out.println("Points: " + fs.getPoints());
+                    System.out.println("Moves: ");
+                    for(Move mv: allMoves) {
+                        System.out.print(mv.getRep());
+                    }
+                    System.out.println();
+                    return;
+                } else {
+                    System.out.println("Current points: " + fs.getPoints());
+                }
             }
         };
         frame.getContentPane().add(pane);

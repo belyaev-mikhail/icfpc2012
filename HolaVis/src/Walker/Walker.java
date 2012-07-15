@@ -462,6 +462,8 @@ public class Walker {
                 fastLambdas.add(sel);
             }
         }
+
+        System.out.println("Fast lambdas: " + fastLambdas);
         while(!fastLambdas.isEmpty()) {
             Collections.sort(fastLambdas, new Comparator<Point>() {
                 @Override
