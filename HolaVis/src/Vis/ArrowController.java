@@ -23,7 +23,7 @@ public abstract class ArrowController  {
     }
 
     public void reset() {
-        System.out.println("resetting arrow controls for " + father);
+        //System.out.println("resetting arrow controls for " + father);
 
         father.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0), "UP");
         father.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0),"DOWN");

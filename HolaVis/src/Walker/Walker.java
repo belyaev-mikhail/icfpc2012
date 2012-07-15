@@ -195,7 +195,7 @@ public class Walker {
             int[] dy = {0,1,0,-1};
             int[] dx = {1,0,-1,0};
 
-            System.out.println("a star");
+            //System.out.println("a star");
             for (int i = 0; i < dy.length; i++) {
                 Point p = new Point(sel.getX() + dx[i], sel.getY() + dy[i], sel);
                 if (!open.contains(p) && !closed.contains(p) && pointWalkableFrom(sel, p, field) && pointInsideBox(p, field)) {
@@ -222,13 +222,13 @@ public class Walker {
 
             while(!open.isEmpty()){
                 Point p = open.get(0);
-                System.out.println("Test playback:" + p);
+                //System.out.println("Test playback:" + p);
                 if(routePlaybackOk(p)) {
-                    System.out.println("Ok path:" + p);
+                    //System.out.println("Ok path:" + p);
                     sel = p;
                     break;
                 } else {
-                    System.out.println("Excluding death point:" + p);
+                    //System.out.println("Excluding death point:" + p);
                     open.remove(p);
                 }
             }
@@ -502,7 +502,7 @@ public class Walker {
             }
         }
 
-        System.out.println("Fast lambdas: " + fastLambdas);
+        //System.out.println("Fast lambdas: " + fastLambdas);
         while(!fastLambdas.isEmpty()) {
             Collections.sort(fastLambdas, new Comparator<Point>() {
                 @Override

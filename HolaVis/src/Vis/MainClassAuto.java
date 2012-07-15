@@ -109,7 +109,7 @@ public class MainClassAuto {
 
                 final Walker walker = new Walker();
                 List<Move> moves = walker.buildRoute(fs);
-                System.out.println(moves);
+                //System.out.println(moves);
 
                 if (moves.isEmpty()) {
                     moves.add(Move.ABORT);
