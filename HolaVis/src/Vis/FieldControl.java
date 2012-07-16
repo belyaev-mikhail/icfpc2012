@@ -343,7 +343,7 @@ public class FieldControl {
         }
         for(Cell c: changes) {
             if(CellState.ROBOT == (oldState.peekCell(c.x, c.y-1)) &&
-                    c.cs == CellState.ROCK) {
+                    (c.cs == CellState.ROCK || c.cs == CellState.LAMBDA)) {
                 onDeath();
                 return;
             }

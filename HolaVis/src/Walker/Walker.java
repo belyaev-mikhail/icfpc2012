@@ -99,6 +99,8 @@ public class Walker {
     }
 
     public Point aStar(final FieldState field, Point from, final Point to, boolean fast) {
+        if(fast) System.out.println("Calling A* fast");
+        else System.out.println("Calling A* slow");
         from.setParent(null);
         List<Point> open = new LinkedList<Point>();
         List<Point> closed = new LinkedList<Point>();
@@ -185,22 +187,27 @@ public class Walker {
                         break;
                     } else {
                         open.remove(p);
-                        Point parentP = p.getParent();
-                        Point retardedP = new Point(parentP.getX(), parentP.getY(), parentP);
-
-                        boolean hasOtherPossibleRoutes = false;
-                        for (int i = 0; i < dy.length; i++) {
-                            Point reopen = new Point(p.getX() + dx[i], p.getY() + dy[i]);
-                            if (!reopen.equals(parentP) && closed.contains(reopen)) {
-                                hasOtherPossibleRoutes = true;
-                                Point actualReopen = closed.get(closed.indexOf(reopen));
-                                closed.remove(actualReopen);
-                                open.add(actualReopen);
-                            }
-                        }
-                        if (hasOtherPossibleRoutes) {
-                            closed.remove(parentP);
-                            open.add(retardedP);
+//                        Point parentP = p.getParent();
+//                        Point retardedP = new Point(parentP.getX(), parentP.getY(), parentP);
+//
+//                        boolean hasOtherPossibleRoutes = false;
+//                        for (int i = 0; i < dy.length; i++) {
+//                            Point reopen = new Point(p.getX() + dx[i], p.getY() + dy[i]);
+//                            if (!reopen.equals(parentP) && closed.contains(reopen)) {
+//                                System.out.println(reopen);
+//                                hasOtherPossibleRoutes = true;
+//                                Point actualReopen = closed.get(closed.indexOf(reopen));
+//                                closed.remove(actualReopen);
+//                                open.add(actualReopen);
+//                            }
+//                        }
+//                        if (hasOtherPossibleRoutes) {
+//                            closed.remove(parentP);
+//                            open.add(retardedP);
+//                            System.out.println("Add retarded point " + retardedP + " with path length " + getParentPathSize(retardedP, field));
+//                        }
+                        if (open.isEmpty()) {
+                            sel = from;
                         }
                     }
                 }
@@ -590,7 +597,7 @@ public class Walker {
                     destination = top;
                     break;
                 } else {
-                    //System.err.println("Taking slow route :(");
+                    System.err.println("Taking slow route :(");
                     Point slow = aStar(field, robot, top, false);
                     fastLambdas.remove(top);
                     if (getParentPathSize(slow) != 0) {
@@ -606,9 +613,9 @@ public class Walker {
                 List<Move> mm = new LinkedList<Move>();
                 mm.add(move);
                 FieldPlayback result = routePlayBackResult(mm);
-//                System.out.println("Move: " + move);
-//                System.out.println("Player dead: " + result.getFieldControl().playerIsDead());
-//                System.out.println("Change: " + result.isSituationChanging());
+                System.out.println("Move: " + move);
+                System.out.println("Player dead: " + result.getFieldControl().playerIsDead());
+                System.out.println("Change: " + result.isSituationChanging());
                 if (!result.getFieldControl().playerIsDead() && result.isSituationChanging()) {
                     return mm;
                 }
