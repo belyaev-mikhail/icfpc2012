@@ -26,6 +26,8 @@ public class JGameField extends JPanel implements FieldControlListener {
         fancies.put('O',  new ImageIcon(JGameField.class.getResource("Res/small-OL.png")) );
         fancies.put(' ',  new ImageIcon(JGameField.class.getResource("Res/small-Empty.png")) );
         fancies.put('@',  new ImageIcon(JGameField.class.getResource("Res/small-LR.png")) );
+        fancies.put('W',  new ImageIcon(JGameField.class.getResource("Res/small-Beard.png")) );
+        fancies.put('!',  new ImageIcon(JGameField.class.getResource("Res/small-Razor.png")) );
         for(char c : "ABCDEFGHI".toCharArray()) {
             fancies.put(c, new ImageIcon(JGameField.class.getResource("Res/small-Tram.png")));
         }
@@ -45,6 +47,8 @@ public class JGameField extends JPanel implements FieldControlListener {
         fanciesWater.put('O',  new ImageIcon(JGameField.class.getResource("Res/blue-small-OL.png")) );
         fanciesWater.put(' ',  new ImageIcon(JGameField.class.getResource("Res/blue-small-Empty.png")) );
         fanciesWater.put('@',  new ImageIcon(JGameField.class.getResource("Res/blue-small-LR.png")) );
+        fanciesWater.put('W',  new ImageIcon(JGameField.class.getResource("Res/blue-small-Beard.png")) );
+        fanciesWater.put('!',  new ImageIcon(JGameField.class.getResource("Res/blue-small-Razor.png")) );
         for(char c : "ABCDEFGHI".toCharArray()) {
             fanciesWater.put(c, new ImageIcon(JGameField.class.getResource("Res/blue-small-Tram.png")));
         }

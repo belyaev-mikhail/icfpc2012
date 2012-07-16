@@ -82,6 +82,11 @@ public class MainClass {
                 sendSignal(Move.WAIT);
             }
 
+            @Override
+            public void shave() {
+                sendSignal(Move.SHAVE);
+            }
+
             private void sendSignal(Move move) {
 
                 FieldControl fs = gf.getFieldControl();

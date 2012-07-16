@@ -99,10 +99,19 @@ public class MainClassAuto {
 
             }
 
+            @Override
+            public void shave() {
+            }
+
             private boolean sendSignal() {
 
                 if(fs.isGameStopped()) {
                     System.out.println("Game finished with " + fs.getFinishingState());
+                    System.out.println("Your moves:");
+                    for(char m: allMoves) {
+                        System.out.print(m);
+                    }
+                    System.out.println();
                     System.out.println("Points: " + fs.getPoints());
                     return false;
                 }
@@ -122,20 +131,22 @@ public class MainClassAuto {
                     fs.commitChange();
 
                     allMoves.add(move.getRep());
-                    System.out.println("Your moves:");
-                    for(char m: allMoves) {
-                        System.out.print(m);
-                    }
-                    System.out.println();
+
+
 
                     if(fs.isGameStopped()) {
                         System.out.println("Game finished with " + fs.getFinishingState());
+                        System.out.println("Your moves:");
+                        for(char m: allMoves) {
+                            System.out.print(m);
+                        }
+                        System.out.println();
                         System.out.println("Points: " + fs.getPoints());
                         return false;
                     }
                 }
 
-                System.out.println("Current points: " + fs.getPoints());
+               // System.out.println("Current points: " + fs.getPoints());
                 return true;
             }
         };

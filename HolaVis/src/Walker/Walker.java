@@ -21,11 +21,9 @@ public class Walker {
 
     Point robot;
 
-    Moves moves = new Moves(0, 0);
-
-    Random rnd = new Random();
-
     public static final int TOP_LAMBDAS = 30;
+
+    public static final double EPS = 1e-3;
 
     public class Point{
         int x;
@@ -111,7 +109,10 @@ public class Walker {
 
         open.add(sel);
         for(;;){
-            if(sel.equals(to) || open.isEmpty()) {
+            if(sel.equals(to)) {
+                if(open.isEmpty()) {
+                    sel = from;
+                }
                 break;
             }
 
@@ -141,10 +142,6 @@ public class Walker {
                 }
             }
 
-
-
-
-
             if (open.isEmpty()) {
                 sel = from;
                 break;
@@ -152,7 +149,28 @@ public class Walker {
             Collections.sort(open,  new Comparator<Point>() {
                 @Override
                 public int compare(Point o1, Point o2) {
-                    return (int)(routeCost(o1, to, field) - routeCost(o2, to, field));
+                    double rc1 = routeCost(o1, to, field);
+                    double rc2 = routeCost(o2, to, field);
+
+                    double diff = rc1 - rc2;
+
+                    int cmp = Math.abs(diff) < EPS ? 0 : (int) Math.signum(diff);
+                    return cmp;
+
+//                    if (cmp == 0) {
+//                        boolean direct1 = o1.equals(to);
+//                        boolean direct2 = o2.equals(to);
+//
+//                        if (direct1) {
+//                            return -1;
+//                        } else if (direct2) {
+//                            return 1;
+//                        } else {
+//                            return 0;
+//                        }
+//                    } else {
+//                        return cmp;
+//                    }
                 }
             });
 
@@ -167,6 +185,23 @@ public class Walker {
                         break;
                     } else {
                         open.remove(p);
+                        Point parentP = p.getParent();
+                        Point retardedP = new Point(parentP.getX(), parentP.getY(), parentP);
+
+                        boolean hasOtherPossibleRoutes = false;
+                        for (int i = 0; i < dy.length; i++) {
+                            Point reopen = new Point(p.getX() + dx[i], p.getY() + dy[i]);
+                            if (!reopen.equals(parentP) && closed.contains(reopen)) {
+                                hasOtherPossibleRoutes = true;
+                                Point actualReopen = closed.get(closed.indexOf(reopen));
+                                closed.remove(actualReopen);
+                                open.add(actualReopen);
+                            }
+                        }
+                        if (hasOtherPossibleRoutes) {
+                            closed.remove(parentP);
+                            open.add(retardedP);
+                        }
                     }
                 }
             }
@@ -248,7 +283,12 @@ public class Walker {
     public  List<Move>  getMovesFromPoint(Point pp) {
         List<Move> moves = new LinkedList<Move>();
         Point p = pp;
+        int razors = control.getState().getRazors();
         while(p.getParent() != null) {
+            if (control.peekCell(p.getX(), p.getY()) == BEARD && razors > 0 ) {
+                moves.add(Move.SHAVE);
+                razors--;
+            }
             moves.add(getDxDy(p.getParent(), p));
             p = p.getParent();
         }
@@ -259,12 +299,20 @@ public class Walker {
     public boolean routePlaybackOk(Point open) {
         List<Move> moves = getMovesFromPoint(open);
 
+        return routePlaybackOk(moves);
+    }
+
+    public boolean routePlaybackOk(List<Move> moves) {
+        FieldPlayback result = routePlayBackResult(moves);
+
+        return !result.getFieldControl().playerIsDead();
+    }
+
+    public FieldPlayback routePlayBackResult(List<Move> moves) {
         FieldPlayback playback = new FieldPlayback(moves, control);
         playback.play();
 
-        FieldControl result = playback.getFieldControl();
-
-        return !result.playerIsDead();
+        return playback;
     }
 
     public static int getParentPathSize(Point current) {
@@ -275,6 +323,9 @@ public class Walker {
         for(Point p = current; p.getParent() != null; p = p.getParent()) {
             if(fieldState != null && fieldState.peekCell(p.x,p.y).isTrampoline()) size += 25;
             size ++;
+            if (fieldState!= null && fieldState.peekCell(p.x,p.y) == BEARD ) {
+                size++;
+            }
         }
         return  size;
     }
@@ -321,6 +372,8 @@ public class Walker {
             case WALL:
             case CLOSED_LIFT:
                 return false;
+            case BEARD:
+                return field.getRazors() > 0;
             default:
                 return true;
         }
@@ -339,7 +392,7 @@ public class Walker {
             CellState c1 = getFieldCellState(pp1, field);
             CellState c2 = getFieldCellState(pp2, field);
             if (c1 != null && c2 != null) {
-                if ((c1 == CellState.EMPTY || c1 == CellState.ROBOT) && c2 == CellState.ROCK) {
+                if ((c1 == CellState.EMPTY || c1 == CellState.ROBOT) && c2.isRock()) {
                     return true;
                 }
             }
@@ -447,10 +500,17 @@ public class Walker {
                 switch (field.getCell(x, y)) {
                     case LAMBDA:
                     case OPEN_LIFT:
+                    case RAZOR:
                         lambdas.add(new Point(x,y));
                         break;
                     case ROBOT:
                         robot = new Point(x,y);
+                        break;
+                    case LAMBDAROCK:
+                        Point p = getPointUnderRock(new Point(x,y), field);
+                        if (p != null) {
+                            lambdas.add(p);
+                        }
                         break;
                     default:
                         break;
@@ -458,6 +518,18 @@ public class Walker {
             }
         }
         return lambdas;
+    }
+
+    public Point getPointUnderRock(Point p, FieldState field) {
+        Point pp = p;
+        while(field.peekCell(pp.getX(), pp.getY()).isRock()) {
+            pp = new Point(pp.getX(), pp.getY() -1);
+        }
+        if (pointWalkable(pp, field)) {
+            return pp;
+        } else {
+            return null;
+        }
     }
 
     public List<Point> getTopLambdas(List<Point> ls, Point robot) {
@@ -518,7 +590,7 @@ public class Walker {
                     destination = top;
                     break;
                 } else {
-                    System.err.println("Taking slow route :(");
+                    //System.err.println("Taking slow route :(");
                     Point slow = aStar(field, robot, top, false);
                     fastLambdas.remove(top);
                     if (getParentPathSize(slow) != 0) {
@@ -528,7 +600,23 @@ public class Walker {
             }
         }
 
-        return getMovesFromPoint(destination);
+        List<Move> moves = getMovesFromPoint(destination);
+        if (moves.isEmpty()) {
+            for(Move move : Move.values()) {
+                List<Move> mm = new LinkedList<Move>();
+                mm.add(move);
+                FieldPlayback result = routePlayBackResult(mm);
+//                System.out.println("Move: " + move);
+//                System.out.println("Player dead: " + result.getFieldControl().playerIsDead());
+//                System.out.println("Change: " + result.isSituationChanging());
+                if (!result.getFieldControl().playerIsDead() && result.isSituationChanging()) {
+                    return mm;
+                }
+            }
+            return moves;
+        }  else {
+            return moves;
+        }
     }
 
     Move getDxDy(Point start, Point next) {

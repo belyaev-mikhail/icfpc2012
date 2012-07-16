@@ -16,6 +16,9 @@ public class FieldState {
     private int flooding = 0;
     private int waterproof = 10;
 
+    private int growth = 25;
+    private int razors = 0;
+
     // trampoline settings
     private Map<Character,Character> tramp = new HashMap<Character, Character>();
 
@@ -43,6 +46,19 @@ public class FieldState {
         this.flooding = flooding;
     }
 
+    public void setRazors(int razors) {
+        this.razors = razors;
+    }
+
+    public int getGrowth() {
+        return growth;
+
+    }
+
+    public int getRazors() {
+        return razors;
+    }
+
     private FieldState(FieldState that) {
         lambdaCounter = that.lambdaCounter;
         playerX = that.playerX;
@@ -51,6 +67,9 @@ public class FieldState {
         water = that.water;
         flooding = that.flooding;
         waterproof = that.waterproof;
+
+        growth = that.growth;
+        razors = that.razors;
 
         for(List<CellState> row: that.cells) {
             cells.add(new ArrayList<CellState>(row));
@@ -62,7 +81,7 @@ public class FieldState {
     @Override
     public String toString() {
         return "FieldState{" +
-                "cells=" + cells +
+                "changes=" + cells +
                 ", lambdaCounter=" + lambdaCounter +
                 ", playerX=" + playerX +
                 ", playerY=" + playerY +
@@ -99,6 +118,7 @@ public class FieldState {
                 CellState toPut = CellState.makeCellState(c);
                 row.add(toPut);
                 if(toPut.equals(CellState.LAMBDA)) lambdaCounter++;
+                if(toPut.equals(CellState.LAMBDAROCK)) lambdaCounter++;
             }
         }
 
@@ -128,6 +148,10 @@ public class FieldState {
                             String src = value;
                             String dst = keyValue[3];
                             tramp.put(src.charAt(0), dst.charAt(0));
+                        } else if (key.equals("Growth")) {
+                            this.growth = Integer.parseInt(value);
+                        } else if (key.equals("Razors")) {
+                            this.razors = Integer.parseInt(value);
                         }
                     }
                 }

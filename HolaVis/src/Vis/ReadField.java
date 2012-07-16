@@ -51,7 +51,7 @@ public class ReadField {
 
         if (args.length >= 1 && args[0].equals("debug")) {
             final FieldControl fs = new FieldControl(readField());
-            System.out.println(fs.getState());
+            //System.out.println(fs.getState());
 
             return;
         }

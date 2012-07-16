@@ -31,6 +31,7 @@ public abstract class ArrowController  {
         father.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0),"LEFT");
         father.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0),"ENTER");
         father.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),"ESCAPE");
+        father.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_S, 0),"SHAVE");
 
         father.getActionMap().put("UP", new AbstractAction() {
             @Override
@@ -74,6 +75,12 @@ public abstract class ArrowController  {
                 abortGame();
             }
         });
+        father.getActionMap().put("SHAVE", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                shave();
+            }
+        });
     }
 
     public abstract void goUp();
@@ -82,4 +89,5 @@ public abstract class ArrowController  {
     public abstract void goRight();
     public abstract void abortGame();
     public abstract void standAndWait();
+    public abstract void shave();
 }

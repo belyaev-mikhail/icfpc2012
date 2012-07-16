@@ -30,11 +30,21 @@ public class FieldControl {
         public CellState getCs() {
             return cs;
         }
+
+        @Override
+        public String toString() {
+            return "Cell{" +
+                    "x=" + x +
+                    ", y=" + y +
+                    ", cs=" + cs +
+                    '}';
+        }
     }
 
     private FieldState oldState;
     //private FieldState newState;
-    LinkedList<Cell> cells = new LinkedList<Cell>();
+    LinkedList<Cell> changes = new LinkedList<Cell>();
+
 
     private int collectedLambdas = 0;
     private int totalTurns = 0;
@@ -43,6 +53,10 @@ public class FieldControl {
 
     private boolean gameStopped = false;
     private FinishState finishingState = null;
+
+    public LinkedList<Cell> getChanges() {
+        return changes;
+    }
 
     public FinishState getFinishingState() {
         return finishingState;
@@ -55,10 +69,10 @@ public class FieldControl {
     }
 
     private void applyChanges() {
-        Cell action = cells.poll();
+        Cell action = changes.poll();
         while(action != null) {
             oldState.setCell(action.x, action.y, action.cs);
-            action = cells.poll();
+            action = changes.poll();
         }
     }
     void startChange(){
@@ -83,12 +97,12 @@ public class FieldControl {
         return oldState.getCell(x, y);
     }
 
-    CellState peekCell(int x, int y) {
+    public CellState peekCell(int x, int y) {
         return oldState.peekCell(x,y);
     }
 
     void setCell(final int x, final int y, final CellState cs) {
-        cells.add(new Cell(x,y,cs));
+        changes.add(new Cell(x, y, cs));
 
     }
 
@@ -171,6 +185,15 @@ public class FieldControl {
             return;
         }
 
+        if(toMove == CellState.RAZOR) {
+            setCell(getPlayerX(), getPlayerY(),CellState.EMPTY);
+            setCell(nx,ny,CellState.ROBOT);
+            setPlayerX(nx);
+            setPlayerY(ny);
+            oldState.setRazors(oldState.getRazors() + 1);
+            return;
+        }
+
         if(toMove.isTrampoline()) {
             Map<Character,Character> tramps = oldState.getTrampolines();
             //System.out.println(tramps);
@@ -209,6 +232,17 @@ public class FieldControl {
 
         }
 
+        if(move == Move.SHAVE) {
+            int x = getPlayerX();
+            int y = getPlayerY();
+            int[] dx = {-1,-1,-1, 0, 0, 1, 1, 1};
+            int[] dy = {-1, 0, 1, 1,-1, 1, 0,-1};
+            for (int i = 0; i < dy.length; i++) {
+                CellState gr = peekCell(x + dx[i], y + dy[i]);
+                if(gr == CellState.BEARD) setCell(x + dx[i], y + dy[i], CellState.EMPTY);
+            }
+        }
+
 
 
     }
@@ -239,7 +273,7 @@ public class FieldControl {
 //                – (x; y) is updated to Empty, (x; y - 1) is updated to Rock.
                 if(toMove.isRock() && peekCell(x,y-1) == CellState.EMPTY) {
                     setCell(x,y,CellState.EMPTY);
-                    if(toMove == CellState.ROCK || peekCell(x,y-2) == CellState.EMPTY){
+                    if(toMove != CellState.LAMBDAROCK || peekCell(x,y-2) == CellState.EMPTY){
                         setCell(x,y-1,toMove);
                     } else if(toMove == CellState.LAMBDAROCK){
                         setCell(x,y-1,CellState.LAMBDA);
@@ -247,7 +281,7 @@ public class FieldControl {
                 }
 //                 If (x; y) contains a Rock, (x; y -1) contains a Rock, (x+1; y) is Empty and (x+1; y 􀀀1) is Empty:
 //                – (x; y) is updated to Empty, (x + 1; y - 1) is updated to Rock.
-                if(toMove.isRock() && peekCell(x,y-1)== CellState.ROCK
+                if(toMove.isRock() && peekCell(x,y-1).isRock()
                         && peekCell(x+1,y).equals(CellState.EMPTY) && peekCell(x+1, y-1).equals(CellState.EMPTY)) {
                     setCell(x,y,CellState.EMPTY);
                     if(toMove == CellState.ROCK || peekCell(x+1,y-2) == CellState.EMPTY){
@@ -260,7 +294,7 @@ public class FieldControl {
 //                 If (x; y) contains a Rock, (x; y - 1) contains a Rock, either (x + 1; y) is not Empty or (x + 1; y - 1)
 //                is not Empty, (x - 1; y) is Empty and (x - 1; y - 1) is Empty:
 //                – (x; y) is updated to Empty, (x - 1; y - 1) is updated to Rock.
-                if(toMove.isRock() && peekCell(x,y-1) == (CellState.ROCK) &&
+                if(toMove.isRock() && peekCell(x,y-1).isRock() &&
                         (peekCell(x+1,y) != (CellState.EMPTY) || peekCell(x+1,y-1) != (CellState.EMPTY)) &&
                         peekCell(x-1,y) == (CellState.EMPTY) && peekCell(x-1,y-1) == (CellState.EMPTY)){
                     setCell(x,y,CellState.EMPTY);
@@ -289,6 +323,16 @@ public class FieldControl {
                 if(toMove == (CellState.CLOSED_LIFT) && getLambdaCounter() == 0 ){
                     setCell(x,y,CellState.OPEN_LIFT);
                 }
+
+                if(toMove == CellState.BEARD &&
+                        oldState.getGrowth() != 0 && totalTurns != 1 && totalTurns % oldState.getGrowth() == 1) {
+                    int[] dx = {-1,-1,-1, 0, 0, 1, 1, 1};
+                    int[] dy = {-1, 0, 1, 1,-1, 1, 0,-1};
+                    for (int i = 0; i < dy.length; i++) {
+                        CellState gr = peekCell(x + dx[i], y + dy[i]);
+                        if(gr == CellState.EMPTY) setCell(x + dx[i], y + dy[i], CellState.BEARD);
+                    }
+                }
 //                 In all other cases, (x; y) remains unchanged.
             }
         }
@@ -297,7 +341,7 @@ public class FieldControl {
             onDeath();
             return;
         }
-        for(Cell c: cells) {
+        for(Cell c: changes) {
             if(CellState.ROBOT == (oldState.peekCell(c.x, c.y-1)) &&
                     c.cs == CellState.ROCK) {
                 onDeath();
@@ -392,7 +436,7 @@ public class FieldControl {
         FieldControl ret = new FieldControl();
         ret.oldState = this.oldState.clone();
         //ret.newState = this.newState.clone();
-        ret.cells = new LinkedList<Cell>(this.cells);
+        ret.changes = new LinkedList<Cell>(this.changes);
 
         ret.points = this.points;
         ret.collectedLambdas = this.collectedLambdas;

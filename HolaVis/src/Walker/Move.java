@@ -13,7 +13,8 @@ public enum Move {
     UP('U'),
     DOWN('D'),
     WAIT('W'),
-    ABORT('A');
+    ABORT('A'),
+    SHAVE('S'),;
 
     char rep;
 
