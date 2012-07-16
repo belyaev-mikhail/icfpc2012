@@ -719,7 +719,7 @@ public class Walker {
                     destination = top;
                     break;
                 } else {
-                    System.err.println("Taking slow route :(");
+                    //System.err.println("Taking slow route :(");
                     Point slow = hyperAStar(field, robot, top);
                     fastLambdas.remove(top);
                     if (getParentPathSize(slow) != 0) {
@@ -735,9 +735,9 @@ public class Walker {
                 List<Move> mm = new LinkedList<Move>();
                 mm.add(move);
                 FieldPlayback result = routePlayBackResult(mm);
-                System.out.println("Move: " + move);
-                System.out.println("Player dead: " + result.getFieldControl().playerIsDead());
-                System.out.println("Change: " + result.isSituationChanging());
+//                System.out.println("Move: " + move);
+//                System.out.println("Player dead: " + result.getFieldControl().playerIsDead());
+//                System.out.println("Change: " + result.isSituationChanging());
                 if (!result.getFieldControl().playerIsDead() && result.isSituationChanging()) {
                     return mm;
                 }
