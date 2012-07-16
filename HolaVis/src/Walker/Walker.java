@@ -9,13 +9,6 @@ import java.util.*;
 
 import static Vis.CellState.*;
 
-/**
- * Created with IntelliJ IDEA.
- * User: lonlylocly
- * Date: 7/13/12
- * Time: 7:55 PM
- * To change this template use File | Settings | File Templates.
- */
 public class Walker {
     FieldControl control;
 
@@ -29,6 +22,7 @@ public class Walker {
         int x;
         int y;
         Point parent = null;
+        int weight = 0;
 
         public Point(int x, int y) {
             this.x = x;
@@ -39,6 +33,12 @@ public class Walker {
             this.x = x;
             this.y = y;
             this.parent = parent;
+        }
+        public Point(int x, int y, Point parent, int weight) {
+            this.x = x;
+            this.y = y;
+            this.parent = parent;
+            this.weight = weight;
         }
 
         public int getX() {
@@ -98,9 +98,95 @@ public class Walker {
         }
     }
 
-    public Point aStar(final FieldState field, Point from, final Point to, boolean fast) {
-        if(fast) System.out.println("Calling A* fast");
-        else System.out.println("Calling A* slow");
+    public Point hyperAStar(final FieldState field, Point from, Point to) {
+        List<List<Integer>> heightMatrix = new ArrayList<List<Integer>>(field.getHeight());
+        for (int i = 0; i < field.getHeight(); i++) {
+            List<Integer> row = new ArrayList<Integer>(field.getWidth());
+            for (int j = 0; j < field.getWidth(); j++) {
+                row.add(0);
+            }
+            heightMatrix.add(row);
+        }
+
+        Point fst = aStar(field, from, to, true, heightMatrix);
+        FieldPlayback playbackResult = routePlayBackResult(fst);
+        if(playbackResult.isOK()) return fst;
+        else {
+            List<List<Move>> deadRoutes = new LinkedList<List<Move>>();
+
+            while(true) {
+//                System.out.println("Dead routes: ");
+//                for(List<Move> route: deadRoutes) {
+//                    for(Move m: route) {
+//                        System.out.print(m.getRep());
+//                    }
+//                    System.out.println();
+//                }
+                List<Move> moves = getMovesFromPoint(fst);
+//                System.out.println("New route: ");
+//                for(Move m: moves) {
+//                    System.out.print(m.getRep());
+//                }
+//                System.out.println();
+                for(List<Move> deadRoute : deadRoutes) {
+                    if(subList(deadRoute, 0, playbackResult.getSteps()).equals(subList(moves, 0, playbackResult.getSteps()))){
+//                       System.out.println("Found equals! PoD = " + playbackResult.getSteps());
+//                        for(Move mv: deadRoute) {
+//                            System.out.print(mv.getRep());
+//                        }
+//                        System.out.println();
+//                        for(Move mv: moves) {
+//                            System.out.print(mv.getRep());
+//                        }
+//                        System.out.println();
+//                       return from;
+                   }
+                }
+                if(deadRoutes.contains(moves)) return from;
+
+                deadRoutes.add(moves);
+
+                Point p = fst;
+                while(p.getParent() != null) {
+                    p = p.getParent();
+                    Integer height = heightMatrix.get(p.y).get(p.x);
+                    heightMatrix.get(p.y).set(p.x, height+25);
+                }
+
+                fst = aStar(field, from, to, true, heightMatrix);
+                moves = getMovesFromPoint(fst);
+                for(List<Move> deadRoute : deadRoutes) {
+                    if(subList(deadRoute, 0, playbackResult.getSteps()).equals(subList(moves, 0, playbackResult.getSteps()))){
+//                        System.out.println("Found equals! PoD = " + playbackResult.getSteps());
+//                        for(Move mv: deadRoute) {
+//                            System.out.print(mv.getRep());
+//                        }
+//                        System.out.println();
+//                        for(Move mv: moves) {
+//                            System.out.print(mv.getRep());
+//                        }
+//                        System.out.println();
+                        return from;
+                    }
+                }
+
+                playbackResult = routePlayBackResult(moves);
+                if(playbackResult.isOK()) return fst;
+
+            }
+
+
+        }
+    }
+
+    static <T> List<T> subList(List<T> arg, int from, int to) {
+        from = Math.min(from,0);
+        to = Math.min(to, arg.size()-1);
+        return arg.subList(from,to);
+    }
+
+    public Point aStar(final FieldState field, Point from, final Point to, final boolean fast, final List<List<Integer>> heightMap) {
+
         from.setParent(null);
         List<Point> open = new LinkedList<Point>();
         List<Point> closed = new LinkedList<Point>();
@@ -151,8 +237,35 @@ public class Walker {
             Collections.sort(open,  new Comparator<Point>() {
                 @Override
                 public int compare(Point o1, Point o2) {
+
+
                     double rc1 = routeCost(o1, to, field);
                     double rc2 = routeCost(o2, to, field);
+
+                    for(Point pp = o1; pp != null; pp = pp.getParent()) {
+                        if(heightMap != null) {
+                            rc1 += heightMap.get(pp.getY()).get(pp.getX());
+                        }
+                        rc1 += pp.weight;
+                        if(field.peekCell(pp.x,pp.y).isRock()) {
+                            //System.out.println(pp);
+                            rc1 += 16;
+                        }
+                    }
+                    for(Point pp = o2; pp != null; pp = pp.getParent()) {
+                        if(heightMap != null) {
+                            rc2 += heightMap.get(pp.getY()).get(pp.getX());
+                        }
+                        rc2 += pp.weight;
+                        if(field.peekCell(pp.x,pp.y).isRock()){
+                            //System.out.println(pp);
+                            rc2 += 16;
+                        }
+                    }
+
+                   // System.out.println("rc1:"+rc1);
+                   // System.out.println("rc2:"+rc2);
+
 
                     double diff = rc1 - rc2;
 
@@ -215,6 +328,10 @@ public class Walker {
         }
 
         return sel;
+    }
+    public Point aStar(final FieldState field, Point from, final Point to, final boolean fast) {
+        return aStar(field, from, to, fast, null);
+
     }
 
     public List<Move> findRoute2(FieldState field, Point from, final Point to) {
@@ -313,6 +430,11 @@ public class Walker {
         FieldPlayback result = routePlayBackResult(moves);
 
         return !result.getFieldControl().playerIsDead();
+    }
+
+    public FieldPlayback routePlayBackResult(Point open) {
+        List<Move> moves = getMovesFromPoint(open);
+        return routePlayBackResult(moves);
     }
 
     public FieldPlayback routePlayBackResult(List<Move> moves) {
@@ -598,7 +720,7 @@ public class Walker {
                     break;
                 } else {
                     System.err.println("Taking slow route :(");
-                    Point slow = aStar(field, robot, top, false);
+                    Point slow = hyperAStar(field, robot, top);
                     fastLambdas.remove(top);
                     if (getParentPathSize(slow) != 0) {
                         fastLambdas.add(slow);

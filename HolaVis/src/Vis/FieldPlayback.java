@@ -10,6 +10,7 @@ public class FieldPlayback {
     FieldControl fieldControl;
     Queue<Move> playerPath;
     boolean situationChanging = false;
+    int steps = 0;
 
     public FieldPlayback(List<Move> playerPath, FieldControl fieldControl) {
         this.playerPath = new LinkedList<Move>(playerPath);
@@ -31,6 +32,7 @@ public class FieldPlayback {
         }
 
         fieldControl.commitChange();
+        steps++;
     }
 
     public void play() {
@@ -53,5 +55,13 @@ public class FieldPlayback {
 
     public FieldControl getFieldControl() {
         return fieldControl;
+    }
+
+    public boolean isOK() {
+        return ! fieldControl.playerIsDead();
+    }
+
+    public int getSteps() {
+        return steps;
     }
 }
