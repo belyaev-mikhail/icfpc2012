@@ -7,4 +7,30 @@ Mate #2:
     Nikolay Vasiliev <vasiliev.n.n@gmail.com>
 
 Implementation details:
-# Todo
+
+    We use Astar algorythm to search path on a map.
+    Each turn, we look for all lambda (razors, and ground under horocks) 
+    destinations, and get "fast" path by Astar. 
+    
+    However, path can be dangerous because of falling rocks.
+    So we pick shortes path to target and check it for safety.
+    Then we run "safe" Astar (we call it hyperAstar) - committing every
+    change to mine oracle, and checking if we are still alive.
+    If we pick a path where we die, Astar is reset, and path applys 
+    to dangerousness map, so next time Astar will avoid danger paths.
+
+    At last we have either safe short path to some target, either no path.
+
+    When robot is out of possible paths, we check if any move can
+    change something - e.g. rock falls. If it does, we make this move.
+
+Source files helper:
+    Module Vis/FieldState.java is mine map & oracle, which we use 
+    to search & check paths.
+
+    Module Walker/Walker.java is decision-maker.
+
+    We've also implemented visualizer for the game:
+      * Vis/MainClass.java to run in manual mode;
+      * Vis/MainClassAuto.java to run with our decision-maker.
+
