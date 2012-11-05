@@ -1,4 +1,7 @@
 syntax: glob
 HolaVis/out/*
 HolaVis/.idea/*
+*.jar
+*.class
+*.MF
 catch
