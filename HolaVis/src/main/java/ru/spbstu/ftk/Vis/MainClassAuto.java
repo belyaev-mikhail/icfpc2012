@@ -130,6 +130,8 @@ public class MainClassAuto {
                     fs.step();
                     fs.commitChange();
 
+                    System.out.println(move.getRep());
+
                     allMoves.add(move.getRep());
 
 

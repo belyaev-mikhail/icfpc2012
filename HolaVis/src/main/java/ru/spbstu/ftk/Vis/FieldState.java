@@ -6,7 +6,7 @@ import java.util.*;
 
 public class FieldState {
 
-    private List<List<CellState>> cells = new ArrayList<List<CellState>>();
+    private int[][] cells;
     private int lambdaCounter = 0;
     private int playerX = 0;
     private int playerY = 0;
@@ -58,7 +58,12 @@ public class FieldState {
         return razors;
     }
 
+
+    //static int fieldStateClones = 0;
     private FieldState(FieldState that) {
+        //fieldStateClones++;
+        //System.out.println("Cloning fieldstate #"+fieldStateClones);
+
         lambdaCounter = that.lambdaCounter;
         playerX = that.playerX;
         playerY = that.playerY;
@@ -70,8 +75,10 @@ public class FieldState {
         growth = that.growth;
         razors = that.razors;
 
-        for(List<CellState> row: that.cells) {
-            cells.add(new ArrayList<CellState>(row));
+        cells = new int[that.cells.length][that.cells[0].length];
+
+        for (int i = 0; i < cells.length; i++) {
+            System.arraycopy(that.cells[i],0,cells[i],0,cells[i].length);
         }
 
         tramp = new HashMap<Character, Character>(that.tramp);
@@ -107,18 +114,23 @@ public class FieldState {
                 return o1.length() - o2.length();
             }
         }).length();
+
+        int curRow = 0;
+        cells = new int[strField.size()][longestRow];
         for(String str: strField) {
             while(str.length() < longestRow) {
                 str += ' ';
             }
-            List<CellState> row = new LinkedList<CellState>();
-            cells.add(row);
-            for (char c: str.toCharArray()) {
-                CellState toPut = CellState.makeCellState(c);
-                row.add(toPut);
+            //List<CellState> row = new LinkedList<CellState>();
+            //cells.add(row);
+            for (int i = 0; i < str.length(); i++) {
+                CellState toPut = CellState.makeCellState(str.charAt(i));
+                cells[curRow][i] = Arrays.binarySearch(CellState.values, toPut);
+                //row.add(toPut);
                 if(toPut.equals(CellState.LAMBDA)) lambdaCounter++;
                 if(toPut.equals(CellState.LAMBDAROCK)) lambdaCounter++;
             }
+            curRow++;
         }
 
         if (parts.length > 1) {
@@ -159,7 +171,14 @@ public class FieldState {
             }
         }
 
-        Collections.reverse(cells);
+        // reverse cells
+        for(int i = 0; i < cells.length/2; i++)
+        {
+            int[] temp = cells[i];
+            cells[i] = cells[cells.length - i - 1];
+            cells[cells.length - i - 1] = temp;
+        }
+
 
         for (int x = 0; x < getWidth(); x++) {
             for (int y = 0; y < getHeight(); y++) {
@@ -172,11 +191,11 @@ public class FieldState {
     }
 
     public CellState getCell(int x, int y) {
-        return cells.get(y).get(x);
+        return CellState.values[cells[y][x]];
     }
 
     public void setCell(int x, int y, CellState cs) {
-        cells.get(y).set(x, cs);
+        cells[y][x] = Arrays.binarySearch(CellState.values, cs);
     }
 
     public CellState peekCell(int x, int y) {
@@ -185,11 +204,11 @@ public class FieldState {
     }
 
     public int getWidth() {
-        return cells.get(0).size();
+        return cells[0].length;
     }
 
     public int getHeight() {
-        return cells.size();
+        return cells.length;
     }
 
     public int getLambdaCounter() {

@@ -139,10 +139,10 @@ public class Walker {
 //                            System.out.print(mv.getRep());
 //                        }
 //                        System.out.println();
-//                       return from;
+                       return from;
                    }
                 }
-                if(deadRoutes.contains(moves)) return from;
+//              if(deadRoutes.contains(moves)) return from;
 
                 deadRoutes.add(moves);
 
@@ -504,7 +504,8 @@ public class Walker {
             case BEARD:
                 return field.getRazors() > 0;
             default:
-                return true;
+                if(cell.isTarget()) return false;
+                else return true;
         }
     }
 

@@ -5,6 +5,7 @@ import ru.spbstu.ftk.Walker.Move;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.Collections;
@@ -22,7 +23,7 @@ public class ReadField {
 
     public static boolean keepWorking = true;
 
-    public static String readField() {
+    public static String readField(InputStream is) {
         String str = "";
         try {
             BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
@@ -36,6 +37,11 @@ public class ReadField {
 
         return str;
     }
+
+    public static String readField() {
+        return readField(System.in);
+    }
+
 
     public static void main(String[] args) {
 

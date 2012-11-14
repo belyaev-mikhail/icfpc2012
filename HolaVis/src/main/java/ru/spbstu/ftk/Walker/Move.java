@@ -26,5 +26,18 @@ public enum Move {
         return rep;
     }
 
+    public static Move getMove(char rep) {
+        switch (rep) {
+            case 'L': return LEFT;
+            case 'R': return RIGHT;
+            case 'U': return UP;
+            case 'D': return DOWN;
+            case 'W': return WAIT;
+            case 'A': return ABORT;
+            case 'S': return SHAVE;
+            default: return null;
+        }
+    }
+
 
 }

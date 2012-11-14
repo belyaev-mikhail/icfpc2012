@@ -1,5 +1,10 @@
 package ru.spbstu.ftk
 
+import ru.spbstu.ftk.Walker.Walker
+import ru.spbstu.ftk.Walker.Move
+import ru.spbstu.ftk.Vis.FieldControl
+import ru.spbstu.ftk.Vis.JGameField
+
 /**
  * Created with IntelliJ IDEA.
  * User: belyaev
@@ -9,21 +14,24 @@ package ru.spbstu.ftk
  */
 class CheckerMain {
     public static void main(String[] args) {
-        def pname = args[0]
-        Process p
-        if(pname.endsWith(".jar")) {
-            pname = "java -jar ${pname}"
-        }
-        p = pname.execute()
-        println pname
 
-        p.outputStream.write(new File(args[1]).bytes)
-        p.outputStream.flush()
+      def path = (System.in.text + "A").getChars().toList()
 
-        println "map loaded"
-        println p.text
+      String map = new File(args[0]).text
 
-        p.destroy()
+      final FieldControl fs = new FieldControl(map)
+
+      List<Move> moves = path.collect{ char x -> Move.getMove(x) }.findAll{ it != null };
+      //System.out.println(moves);
+
+      for(Move move : moves) {
+        fs.playerMove(move);
+        fs.startChange();
+        fs.step();
+        fs.commitChange();
+      }
+
+      println fs.points
 
     }
 }

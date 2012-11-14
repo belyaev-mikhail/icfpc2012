@@ -80,6 +80,10 @@ public class FieldControl {
         //newState = oldState.clone();
     }
 
+    public int getCollectedLambdas() {
+        return collectedLambdas;
+    }
+
     void commitChange(){
         //oldState = newState;
         applyChanges();

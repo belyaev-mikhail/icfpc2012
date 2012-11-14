@@ -55,6 +55,38 @@ public enum CellState {
     static CellState makeCellState(char c) {
         String possibles = "R#*\\LO. ABCDEFGHI123456789@W!";
         if(possibles.indexOf(c) == -1) return CellState.WALL;
-        return CellState.values()[possibles.indexOf(c)];
+        return CellState.values[possibles.indexOf(c)];
     }
+
+    static CellState[] values = {
+            ROBOT,
+            WALL,
+            ROCK,
+            LAMBDA,
+            CLOSED_LIFT,
+            OPEN_LIFT,
+            EARTH,
+            EMPTY,
+            TRAMPOLINE_A,
+            TRAMPOLINE_B,
+            TRAMPOLINE_C,
+            TRAMPOLINE_D,
+            TRAMPOLINE_E,
+            TRAMPOLINE_F,
+            TRAMPOLINE_G,
+            TRAMPOLINE_H,
+            TRAMPOLINE_I,
+            TARGET_1,
+            TARGET_2,
+            TARGET_3,
+            TARGET_4,
+            TARGET_5,
+            TARGET_6,
+            TARGET_7,
+            TARGET_8,
+            TARGET_9,
+            LAMBDAROCK,
+            BEARD,
+            RAZOR
+    };
 }
